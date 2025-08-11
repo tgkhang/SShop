@@ -10,9 +10,9 @@ import java.util.List;
 
 @Getter
 @Setter
-@Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Entity
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

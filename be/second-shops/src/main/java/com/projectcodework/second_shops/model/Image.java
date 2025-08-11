@@ -17,11 +17,11 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String filename;
-    private String filetype;
+    private String fileName;
+    private String fileType;
 
     @Lob
-    private Blob blob;
+    private Blob image;
     private String downloadUrl;
 
     @ManyToOne
