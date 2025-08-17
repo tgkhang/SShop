@@ -1,6 +1,8 @@
 package com.projectcodework.second_shops.controller;
 
+import com.projectcodework.second_shops.dto.ProductDto;
 import com.projectcodework.second_shops.exceptions.ResourceNotFoundException;
+import com.projectcodework.second_shops.mapper.ProductMapper;
 import com.projectcodework.second_shops.model.Product;
 import com.projectcodework.second_shops.request.AddProductRequest;
 import com.projectcodework.second_shops.request.ProductUpdateRequest;
@@ -18,18 +20,21 @@ import java.util.List;
 @RequestMapping("${api.prefix}/products")
 public class ProductController {
     private final IProductService productService;
+    private final ProductMapper productMapper;
 
     @GetMapping("/all")
     public ResponseEntity<APIResponse> getAllProducts() {
         List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(new APIResponse("success", products));
+        List<ProductDto> productDtos = productMapper.mapToProductDtos(products);
+        return ResponseEntity.ok(new APIResponse("success", productDtos));
     }
 
     @GetMapping("/product/{productId}/product")
     public ResponseEntity<APIResponse> getProductById(@PathVariable Long productId) {
         try {
             Product product = productService.getProductById(productId);
-            return ResponseEntity.ok(new APIResponse("success", product));
+            ProductDto productDto = productMapper.mapToProductDto(product);
+            return ResponseEntity.ok(new APIResponse("success", productDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse(e.getMessage(), null));
         }
@@ -39,7 +44,8 @@ public class ProductController {
     public ResponseEntity<APIResponse> addProduct(@RequestBody AddProductRequest addProductRequest) {
         try {
             Product product = productService.addProduct(addProductRequest);
-            return ResponseEntity.ok(new APIResponse("success", product));
+            ProductDto productDto = productMapper.mapToProductDto(product);
+            return ResponseEntity.ok(new APIResponse("success", productDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new APIResponse(e.getMessage(), null));
         }
@@ -51,7 +57,8 @@ public class ProductController {
             @PathVariable Long productId) {
         try {
             Product updatedProduct = productService.updateProduct(request, productId);
-            return ResponseEntity.ok(new APIResponse("success", updatedProduct));
+            ProductDto productDto = productMapper.mapToProductDto(updatedProduct);
+            return ResponseEntity.ok(new APIResponse("success", productDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse(e.getMessage(), null));
         }
@@ -74,7 +81,8 @@ public class ProductController {
             if (products.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse("No product found", null));
             }
-            return ResponseEntity.ok(new APIResponse("success", products));
+            List<ProductDto> productDtos = productMapper.mapToProductDtos(products);
+            return ResponseEntity.ok(new APIResponse("success", productDtos));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse(e.getMessage(), null));
         }
@@ -88,7 +96,8 @@ public class ProductController {
             if (products.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse("No product found", null));
             }
-            return ResponseEntity.ok(new APIResponse("success", products));
+            List<ProductDto> productDtos = productMapper.mapToProductDtos(products);
+            return ResponseEntity.ok(new APIResponse("success", productDtos));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse(e.getMessage(), null));
         }
@@ -101,7 +110,8 @@ public class ProductController {
             if (products.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse("No product found", null));
             }
-            return ResponseEntity.ok(new APIResponse("success", products));
+            List<ProductDto> productDtos = productMapper.mapToProductDtos(products);
+            return ResponseEntity.ok(new APIResponse("success", productDtos));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse(e.getMessage(), null));
         }
@@ -111,7 +121,8 @@ public class ProductController {
     public ResponseEntity<APIResponse> getProductByBrand(@RequestParam String brand) {
         try {
             List<Product> products = productService.getProductsByBrand(brand);
-            return ResponseEntity.ok(new APIResponse("success", products));
+            List<ProductDto> productDtos = productMapper.mapToProductDtos(products);
+            return ResponseEntity.ok(new APIResponse("success", productDtos));
 
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse(e.getMessage(), null));
@@ -125,21 +136,22 @@ public class ProductController {
             if (products.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse("No product found", null));
             }
-            return ResponseEntity.ok(new APIResponse("success", products));
+            List<ProductDto> productDtos = productMapper.mapToProductDtos(products);
+            return ResponseEntity.ok(new APIResponse("success", productDtos));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse(e.getMessage(), null));
         }
     }
 
     @GetMapping("products/count/by-brand/by-name")
-    public ResponseEntity<APIResponse> countProductCountByBrandAndName(@RequestParam String brand, @RequestParam String name) {
+    public ResponseEntity<APIResponse> countProductCountByBrandAndName(@RequestParam String brand,
+            @RequestParam String name) {
         try {
             var products = productService.countProductsByBrandAndName(brand, name);
 
-            return  ResponseEntity.ok(new APIResponse("success", products));
-        }
-        catch (Exception e) {
-            return ResponseEntity.ok(new APIResponse( e.getMessage(),null));
+            return ResponseEntity.ok(new APIResponse("success", products));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new APIResponse(e.getMessage(), null));
         }
     }
 }
