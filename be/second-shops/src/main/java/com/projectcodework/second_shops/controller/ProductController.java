@@ -8,6 +8,7 @@ import com.projectcodework.second_shops.request.AddProductRequest;
 import com.projectcodework.second_shops.request.ProductUpdateRequest;
 import com.projectcodework.second_shops.response.APIResponse;
 import com.projectcodework.second_shops.service.product.IProductService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Product Management", description = "APIs for managing products")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${api.prefix}/products")
@@ -29,7 +31,7 @@ public class ProductController {
         return ResponseEntity.ok(new APIResponse("success", productDtos));
     }
 
-    @GetMapping("/product/{productId}/product")
+    @GetMapping("/{productId}/product")
     public ResponseEntity<APIResponse> getProductById(@PathVariable Long productId) {
         try {
             Product product = productService.getProductById(productId);
@@ -52,7 +54,7 @@ public class ProductController {
 
     }
 
-    @PutMapping("/product/{productId}/update")
+    @PutMapping("/{productId}/update")
     public ResponseEntity<APIResponse> updateProduct(@RequestBody ProductUpdateRequest request,
             @PathVariable Long productId) {
         try {
@@ -64,7 +66,7 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping("/product/{productId}/delete")
+    @DeleteMapping("/{productId}/delete")
     public ResponseEntity<APIResponse> deleteProduct(@PathVariable Long productId) {
         try {
             productService.deleteProduct(productId);
@@ -74,7 +76,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/products/by/brand-and-name")
+    @GetMapping("/by/brand-and-name")
     public ResponseEntity<APIResponse> getProductByBrandAndName(@RequestParam String brand, @RequestParam String name) {
         try {
             List<Product> products = productService.getProductsByBrandAndName(brand, name);
@@ -88,7 +90,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/products/by/category-and-brand")
+    @GetMapping("/by/category-and-brand")
     public ResponseEntity<APIResponse> getProductByCategoryAndBrand(@RequestParam String category,
             @RequestParam String brand) {
         try {
@@ -103,7 +105,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/products/{name}/products")
+    @GetMapping("/{name}/products")
     public ResponseEntity<APIResponse> getProductByName(@PathVariable String name) {
         try {
             List<Product> products = productService.getProductsByName(name);
@@ -117,7 +119,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/products/by-brand")
+    @GetMapping("/by-brand")
     public ResponseEntity<APIResponse> getProductByBrand(@RequestParam String brand) {
         try {
             List<Product> products = productService.getProductsByBrand(brand);
@@ -129,7 +131,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/products/by-category")
+    @GetMapping("/by-category")
     public ResponseEntity<APIResponse> getProductByCategory(@RequestParam String category) {
         try {
             List<Product> products = productService.getProductsByCategory(category);
@@ -143,7 +145,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("products/count/by-brand/by-name")
+    @GetMapping("/count/by-brand/by-name")
     public ResponseEntity<APIResponse> countProductCountByBrandAndName(@RequestParam String brand,
             @RequestParam String name) {
         try {

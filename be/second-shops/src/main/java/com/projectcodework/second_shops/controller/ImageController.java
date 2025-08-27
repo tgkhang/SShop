@@ -5,6 +5,7 @@ import com.projectcodework.second_shops.exceptions.ResourceNotFoundException;
 import com.projectcodework.second_shops.model.Image;
 import com.projectcodework.second_shops.response.APIResponse;
 import com.projectcodework.second_shops.service.image.IImageService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+@Tag(name = "Image Management", description = "APIs for managing product images")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${api.prefix}/images")
@@ -37,7 +39,7 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/image/download/{imageId}")
+    @GetMapping("/download/{imageId}")
     public ResponseEntity<Resource> downloadImage(@PathVariable Long imageId) throws SQLException, IOException {
         Image image = imageService.getImageById(imageId);
         ByteArrayResource resource = new ByteArrayResource(
@@ -48,7 +50,7 @@ public class ImageController {
                 .body(resource);
     }
 
-    @PutMapping("/image/{imageId}/update")
+    @PutMapping("/{imageId}/update")
     public ResponseEntity<APIResponse> updateImage(@PathVariable Long imageId, @RequestBody MultipartFile file) {
         try {
             Image image = imageService.getImageById(imageId);
@@ -64,7 +66,7 @@ public class ImageController {
                 .body(new APIResponse("Update failed!", HttpStatus.INTERNAL_SERVER_ERROR.toString()));
     }
 
-    @DeleteMapping("/image/{imageId}/delete")
+    @DeleteMapping("/{imageId}/delete")
     public ResponseEntity<APIResponse> deleteImage(@PathVariable Long imageId) {
         try {
             Image image = imageService.getImageById(imageId);

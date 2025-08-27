@@ -5,6 +5,7 @@ import com.projectcodework.second_shops.exceptions.ResourceNotFoundException;
 import com.projectcodework.second_shops.model.Category;
 import com.projectcodework.second_shops.response.APIResponse;
 import com.projectcodework.second_shops.service.category.ICategoryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Category Management", description = "APIs for managing product categories")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${api.prefix}/categories")

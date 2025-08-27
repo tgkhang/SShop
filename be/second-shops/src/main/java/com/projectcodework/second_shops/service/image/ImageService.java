@@ -19,8 +19,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ImageService implements IImageService{
-    private ImageRepository imageRepository;
-    private IProductService productService;
+    private final ImageRepository imageRepository;
+    private final IProductService productService;
 
     @Override
     public Image getImageById(Long id) {
@@ -50,7 +50,7 @@ public class ImageService implements IImageService{
                 image.setImage(new SerialBlob(file.getBytes()));
                 image.setProduct(product);
 
-                String buildDownloadUrl = "/api/v1/images/image/download/";
+                String buildDownloadUrl = "/api/v1/images/download/";
                 String downloadUrl =  buildDownloadUrl+ image.getId();
                 image.setDownloadUrl(downloadUrl);
                 Image savedImage = imageRepository.save(image);
