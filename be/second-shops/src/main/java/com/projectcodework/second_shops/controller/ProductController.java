@@ -27,7 +27,10 @@ public class ProductController {
     @GetMapping("/all")
     public ResponseEntity<APIResponse> getAllProducts() {
         List<Product> products = productService.getAllProducts();
+
+        //2 METHOD OF TRANSFER
         List<ProductDto> productDtos = productMapper.mapToProductDtos(products);
+        //List<ProductDto> dtos= productService.getConvertedProducts(products);
         return ResponseEntity.ok(new APIResponse("success", productDtos));
     }
 
@@ -36,6 +39,7 @@ public class ProductController {
         try {
             Product product = productService.getProductById(productId);
             ProductDto productDto = productMapper.mapToProductDto(product);
+            //ProductDto productDto1 = productService.convertToDto(product);
             return ResponseEntity.ok(new APIResponse("success", productDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse(e.getMessage(), null));
@@ -80,10 +84,14 @@ public class ProductController {
     public ResponseEntity<APIResponse> getProductByBrandAndName(@RequestParam String brand, @RequestParam String name) {
         try {
             List<Product> products = productService.getProductsByBrandAndName(brand, name);
+
             if (products.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse("No product found", null));
             }
+            //2 method
             List<ProductDto> productDtos = productMapper.mapToProductDtos(products);
+            //List<ProductDto> productDtos1 = productService.getConvertedProducts(products);
+
             return ResponseEntity.ok(new APIResponse("success", productDtos));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse(e.getMessage(), null));

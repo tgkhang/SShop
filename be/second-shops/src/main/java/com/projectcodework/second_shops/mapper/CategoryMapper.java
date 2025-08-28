@@ -14,7 +14,6 @@ public class CategoryMapper {
         CategoryDto categoryDto = new CategoryDto();
         categoryDto.setId(category.getId());
         categoryDto.setName(category.getName());
-        // Note: We don't include products to avoid circular reference
         return categoryDto;
     }
 

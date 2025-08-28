@@ -5,14 +5,46 @@ import com.projectcodework.second_shops.dto.ImageDto;
 import com.projectcodework.second_shops.dto.ProductDto;
 import com.projectcodework.second_shops.model.Image;
 import com.projectcodework.second_shops.model.Product;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class ProductMapper {
+    //MODELMAPPER VERSION OF MAPPER
+    private final ModelMapper modelMapper;
 
+    public ProductDto toDto(Product product) {
+        if (product == null) return null;
+        ProductDto dto = modelMapper.map(product, ProductDto.class);
+
+        // Handle special cases manually
+        if (product.getCategory() != null) {
+            dto.setCategory(
+                    modelMapper.map(product.getCategory(), CategoryDto.class)
+            );
+        }
+        if (product.getImages() != null) {
+            dto.setImages(
+                    product.getImages().stream()
+                            .map(image -> modelMapper.map(image, ImageDto.class))
+                            .collect(Collectors.toList())
+            );
+        }
+        return dto;
+    }
+
+    public List<ProductDto> toDtos(List<Product> products) {
+        return products.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    //IN HAND VERSION OF MAPPER
     public ProductDto mapToProductDto(Product product) {
         ProductDto productDto = new ProductDto();
         productDto.setId(product.getId());
