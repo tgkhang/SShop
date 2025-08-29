@@ -51,8 +51,7 @@ public class CartItemService implements ICartItemService {
         cartItem.setTotalPrice();
         cart.addItem(cartItem);
         cartItemRepository.save(cartItem);
-        // Cart will automatically update its total when item is added via addItem
-        // method
+        cartRepository.save(cart);
     }
 
     @Override
@@ -61,8 +60,7 @@ public class CartItemService implements ICartItemService {
         Cart cart = cartService.getCartById(cartId);
         CartItem itemToRemove = getCartItem(cartId, productId);
         cart.removeItem(itemToRemove);
-        // Cart will automatically update its total when item is removed via removeItem
-        // method
+        cartRepository.save(cart);
     }
 
     @Override
@@ -85,6 +83,7 @@ public class CartItemService implements ICartItemService {
 
         // Update the cart's total amount and save
         cart.updateTotalAmount();
+        cartRepository.save(cart);
     }
 
     @Override
