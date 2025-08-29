@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.smartcardio.Card;
 import java.math.BigDecimal;
 
 @Getter
@@ -29,12 +27,12 @@ public class CartItem {
     private Product product;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name= "cart_id")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id")
     private Cart cart;
 
-
-    public void setTotalPrice(){
-        this.totalPrice = this.unitPrice.multiply(this.product.getPrice());
+    public void setTotalPrice() {
+        this.totalPrice = this.unitPrice.multiply(BigDecimal.valueOf(quantity));
+        // this.totalPrice = this.unitPrice.multiply(new BigDecimal(quantity));
     }
 }

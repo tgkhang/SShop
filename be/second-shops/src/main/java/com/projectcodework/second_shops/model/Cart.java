@@ -1,6 +1,5 @@
 package com.projectcodework.second_shops.model;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +8,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -24,10 +22,25 @@ public class Cart {
 
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
-
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartItem> items = new HashSet<>();
 
+    public void addItem(CartItem item) {
+        this.items.add(item);
+        item.setCart(this);
+        updateTotalAmount();
+    }
 
+    public void removeItem(CartItem item) {
+        this.items.remove(item);
+        item.setCart(null);
+        updateTotalAmount();
+    }
 
+    public void updateTotalAmount() {
+        this.totalAmount = items.stream()
+                .filter(item -> item.getUnitPrice() != null && item.getQuantity() > 0)
+                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 }
