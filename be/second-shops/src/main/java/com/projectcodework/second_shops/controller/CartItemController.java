@@ -1,0 +1,89 @@
+package com.projectcodework.second_shops.controller;
+
+import com.projectcodework.second_shops.exceptions.ResourceNotFoundException;
+import com.projectcodework.second_shops.model.Cart;
+import com.projectcodework.second_shops.model.CartItem;
+import com.projectcodework.second_shops.response.APIResponse;
+import com.projectcodework.second_shops.service.cart.ICartItemService;
+import com.projectcodework.second_shops.service.cart.ICartService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.HttpStatus.*;
+
+@Tag(name = "Cart Item Management", description = "Endpoints for managing cart items")
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("${api.prefix}/cartItems")
+public class CartItemController {
+    private final ICartItemService cartItemService;
+    private final ICartService cartService;
+
+    // add by path
+    // @PutMapping("/{cartId}/items/{productId}")
+    // public ResponseEntity<APIResponse> addItemToCart(@PathVariable Long cartId,
+    // @PathVariable Long productId,
+    // @RequestParam int quantity) {
+    // try {
+    // cartItemService.addItemToCart(cartId, productId, quantity);
+    // return ResponseEntity.ok(new APIResponse("Add Item Success", null));
+    // } catch (Exception e) {
+    // return ResponseEntity.status(NOT_FOUND).body(new APIResponse(e.getMessage(),
+    // null));
+    // }
+    // }
+
+    // add by params
+    @PostMapping("/item/add")
+    public ResponseEntity<APIResponse> addItemToCart(@RequestParam(required = false) Long cartId,
+            @RequestParam Long productId,
+            @RequestParam Integer quantity) {
+        try {
+            if (cartId == null) {
+                Cart cart = cartService.createNewCart();
+                cartId = cart.getId();
+            }
+            cartItemService.addItemToCart(cartId, productId, quantity);
+            return ResponseEntity.ok(new APIResponse("Add item successfully", null));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new APIResponse(e.getMessage(), null));
+        }
+    }
+
+    @DeleteMapping("/{cartId}/items/{productId}")
+    public ResponseEntity<APIResponse> removeItemFromCart(@PathVariable Long cartId,
+                                                          @PathVariable Long productId) {
+        try {
+            cartItemService.removeItemFromCart(cartId, productId);
+            return ResponseEntity.ok(new APIResponse("Remove Item Success", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(NOT_FOUND).body(new APIResponse(e.getMessage(), null));
+        }
+    }
+
+    @PutMapping("/{cartId}/items/{productId}/quantity")
+    public ResponseEntity<APIResponse> updateItemQuantity(@PathVariable Long cartId,
+                                                          @PathVariable Long productId,
+                                                          @RequestParam int quantity) {
+        try {
+            cartItemService.updateItemQuantity(cartId, productId, quantity);
+            return ResponseEntity.ok(new APIResponse("Update Item Success", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(NOT_FOUND).body(new APIResponse(e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/{cartId}/items/{productId}")
+    public ResponseEntity<APIResponse> getCartItem(@PathVariable Long cartId,
+                                                   @PathVariable Long productId) {
+        try {
+            CartItem cartItem = cartItemService.getCartItem(cartId, productId);
+            return ResponseEntity.ok(new APIResponse("Success", cartItem));
+        } catch (Exception e) {
+            return ResponseEntity.status(NOT_FOUND).body(new APIResponse(e.getMessage(), null));
+        }
+    }
+}
