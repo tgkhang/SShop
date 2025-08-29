@@ -1,7 +1,8 @@
 package com.projectcodework.second_shops.controller;
 
+import com.projectcodework.second_shops.dto.CartItemDto;
 import com.projectcodework.second_shops.exceptions.ResourceNotFoundException;
-import com.projectcodework.second_shops.model.Cart;
+import com.projectcodework.second_shops.mapper.CartItemMapper;
 import com.projectcodework.second_shops.model.CartItem;
 import com.projectcodework.second_shops.response.APIResponse;
 import com.projectcodework.second_shops.service.cart.ICartItemService;
@@ -21,6 +22,7 @@ import static org.springframework.http.HttpStatus.*;
 public class CartItemController {
     private final ICartItemService cartItemService;
     private final ICartService cartService;
+    private final CartItemMapper cartItemMapper;
 
     // add by path
     // @PutMapping("/{cartId}/items/{productId}")
@@ -43,13 +45,14 @@ public class CartItemController {
             @RequestParam Integer quantity) {
         try {
             if (cartId == null) {
-                Cart cart = cartService.createNewCart();
-                cartId = cart.getId();
+                cartId = cartService.createNewCart();
             }
             cartItemService.addItemToCart(cartId, productId, quantity);
             return ResponseEntity.ok(new APIResponse("Add item successfully", null));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new APIResponse(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new APIResponse("An error occurred while adding item to cart", null));
         }
     }
 
@@ -59,8 +62,10 @@ public class CartItemController {
         try {
             cartItemService.removeItemFromCart(cartId, productId);
             return ResponseEntity.ok(new APIResponse("Remove Item Success", null));
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new APIResponse(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new APIResponse("An error occurred while removing item from cart", null));
         }
     }
 
@@ -71,8 +76,10 @@ public class CartItemController {
         try {
             cartItemService.updateItemQuantity(cartId, productId, quantity);
             return ResponseEntity.ok(new APIResponse("Update Item Success", null));
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new APIResponse(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new APIResponse("An error occurred while updating item quantity", null));
         }
     }
 
@@ -81,9 +88,12 @@ public class CartItemController {
                                                    @PathVariable Long productId) {
         try {
             CartItem cartItem = cartItemService.getCartItem(cartId, productId);
-            return ResponseEntity.ok(new APIResponse("Success", cartItem));
-        } catch (Exception e) {
+            CartItemDto cartItemDto = cartItemMapper.mapToCartItemDto(cartItem);
+            return ResponseEntity.ok(new APIResponse("Success", cartItemDto));
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new APIResponse(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new APIResponse("An error occurred while retrieving the cart item", null));
         }
     }
 }

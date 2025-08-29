@@ -13,7 +13,7 @@ import java.util.List;
 
 @Configuration
 public class OpenApiConfig {
-
+        //http://localhost:9193/swagger-ui/index.html
         @Value("${server.port:9193}")
         private String serverPort;
 
