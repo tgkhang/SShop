@@ -17,4 +17,6 @@ public interface IUserService {
     List<UserDto> getAllUsers();
     UserDto convertUserToDto(User user);
     User getUserByEmail(String email);
+
+    User getAuthenticatedUser();
 }

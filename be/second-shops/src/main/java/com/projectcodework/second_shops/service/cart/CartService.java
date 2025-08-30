@@ -2,6 +2,7 @@ package com.projectcodework.second_shops.service.cart;
 
 import com.projectcodework.second_shops.exceptions.ResourceNotFoundException;
 import com.projectcodework.second_shops.model.Cart;
+import com.projectcodework.second_shops.model.User;
 import com.projectcodework.second_shops.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,22 @@ public class CartService implements ICartService {
         Cart newCart = new Cart();
         Cart savedCart = cartRepository.save(newCart);
         return savedCart.getId();
+    }
+    
+    @Override
+    @Transactional
+    public Cart createNewCart(User user) {
+        // Check if user already has a cart
+        Cart existingCart = cartRepository.findByUserId(user.getId());
+        if (existingCart != null) {
+            return existingCart;
+        }
+        
+        // Create new cart for user
+        Cart newCart = new Cart();
+        newCart.setUser(user);
+        newCart.setTotalAmount(BigDecimal.ZERO);
+        return cartRepository.save(newCart);
     }
 
     @Override

@@ -3,11 +3,14 @@ package com.projectcodework.second_shops.controller;
 import com.projectcodework.second_shops.dto.CartItemDto;
 import com.projectcodework.second_shops.exceptions.ResourceNotFoundException;
 import com.projectcodework.second_shops.mapper.CartItemMapper;
+import com.projectcodework.second_shops.model.Cart;
 import com.projectcodework.second_shops.model.CartItem;
+import com.projectcodework.second_shops.model.User;
 import com.projectcodework.second_shops.response.APIResponse;
 import com.projectcodework.second_shops.service.cart.ICartItemService;
 import com.projectcodework.second_shops.service.cart.ICartService;
-
+import com.projectcodework.second_shops.service.user.IUserService;
+import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ public class CartItemController {
     private final ICartItemService cartItemService;
     private final ICartService cartService;
     private final CartItemMapper cartItemMapper;
+    private final IUserService userService;
 
     // add by path
     // @PutMapping("/{cartId}/items/{productId}")
@@ -45,11 +49,17 @@ public class CartItemController {
             @RequestParam Long productId,
             @RequestParam Integer quantity) {
         try {
-            if (cartId == null) {
-                cartId = cartService.createNewCart();
-            }
-            cartItemService.addItemToCart(cartId, productId, quantity);
+//            if (cartId == null) {
+//                cartId = cartService.createNewCart();
+//            }
+
+            User user = userService.getAuthenticatedUser();
+            Cart cart = cartService.createNewCart(user);
+
+            cartItemService.addItemToCart(cart.getId(), productId, quantity);
             return ResponseEntity.ok(new APIResponse("Add item successfully", null));
+        } catch (JwtException e) {
+            return ResponseEntity.status(UNAUTHORIZED).body(new APIResponse("Unauthorized", null));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new APIResponse(e.getMessage(), null));
         } catch (Exception e) {

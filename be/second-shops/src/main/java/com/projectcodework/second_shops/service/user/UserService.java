@@ -9,6 +9,9 @@ import com.projectcodework.second_shops.repository.UserRepository;
 import com.projectcodework.second_shops.request.CreateUserRequest;
 import com.projectcodework.second_shops.request.UpdateUserRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +22,7 @@ import java.util.List;
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -39,7 +43,8 @@ public class UserService implements IUserService {
                 request.getFirstName(),
                 request.getLastName(),
                 request.getEmail(),
-                request.getPassword() //TODO : NEED HASH HERE
+                //request.getPassword() //TODO : NEED HASH HERE
+                passwordEncoder.encode(request.getPassword())
         );
         return userRepository.save(user);
     }
@@ -88,6 +93,14 @@ public class UserService implements IUserService {
     @Override
     @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+    }
+
+    @Override
+    public User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
     }

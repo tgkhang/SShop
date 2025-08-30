@@ -1,6 +1,7 @@
 package com.projectcodework.second_shops.service.cart;
 
 import com.projectcodework.second_shops.model.Cart;
+import com.projectcodework.second_shops.model.User;
 
 import java.math.BigDecimal;
 
@@ -9,5 +10,6 @@ public interface ICartService {
     void clearCartById(Long id);
     BigDecimal getTotalPrice(Long id);
     Long createNewCart();
+    Cart createNewCart(User user);
     Cart getCartByUserId(Long userId);
 }

@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,6 +52,7 @@ public class ProductController {
     }
 
     @Operation(summary = "Add Product", description = "Add a new product")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<APIResponse> addProduct(@RequestBody AddProductRequest addProductRequest) {
         try {
@@ -64,6 +66,7 @@ public class ProductController {
     }
 
     @Operation(summary = "Update Product", description = "Update an existing product")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{productId}/update")
     public ResponseEntity<APIResponse> updateProduct(@RequestBody ProductUpdateRequest request,
             @PathVariable Long productId) {
@@ -77,6 +80,7 @@ public class ProductController {
     }
 
     @Operation(summary = "Delete Product", description = "Delete an existing product")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{productId}/delete")
     public ResponseEntity<APIResponse> deleteProduct(@PathVariable Long productId) {
         try {
