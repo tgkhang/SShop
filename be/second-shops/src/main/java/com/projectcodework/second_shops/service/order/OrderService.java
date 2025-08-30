@@ -44,10 +44,13 @@ public class OrderService implements IOrderService {
         // Create order
         Order order = createOrder(cart, user);
 
-        // Clear the cart after order is placed
+        // Save the order first
+        Order savedOrder = orderRepository.save(order);
+
+        // Clear the cart after order is successfully placed
         cartService.clearCartById(cart.getId());
 
-        return orderRepository.save(order);
+        return savedOrder;
     }
 
     @Override

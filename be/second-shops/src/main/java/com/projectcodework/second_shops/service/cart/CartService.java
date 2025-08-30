@@ -2,21 +2,17 @@ package com.projectcodework.second_shops.service.cart;
 
 import com.projectcodework.second_shops.exceptions.ResourceNotFoundException;
 import com.projectcodework.second_shops.model.Cart;
-import com.projectcodework.second_shops.repository.CartItemRepository;
 import com.projectcodework.second_shops.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @RequiredArgsConstructor
 public class CartService implements ICartService {
     private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
-    private final AtomicLong cartIdGenerator = new AtomicLong(0);
 
     @Override
     @Transactional(readOnly = true)
@@ -28,10 +24,11 @@ public class CartService implements ICartService {
     @Override
     @Transactional
     public void clearCartById(Long id) {
-        // Validate cart exists first
-        getCartById(id);
-        // Delete the cart (cascade will handle cart items due to orphanRemoval = true)
-        cartRepository.deleteById(id);
+        // Get the cart and clear its items while keeping the cart entity
+        Cart cart = getCartById(id);
+        cart.getItems().clear();
+        cart.setTotalAmount(BigDecimal.ZERO);
+        cartRepository.save(cart);
     }
 
     @Override
@@ -45,9 +42,8 @@ public class CartService implements ICartService {
     @Transactional
     public Long createNewCart() {
         Cart newCart = new Cart();
-        Long newCartId = cartIdGenerator.incrementAndGet();
-        newCart.setId(newCartId);
-        return cartRepository.save(newCart).getId();
+        Cart savedCart = cartRepository.save(newCart);
+        return savedCart.getId();
     }
 
     @Override

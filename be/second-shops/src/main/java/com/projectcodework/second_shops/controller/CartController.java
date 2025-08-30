@@ -60,13 +60,13 @@ public class CartController {
         }
     }
 
-//    @PostMapping("/create")
-//    public ResponseEntity<APIResponse> createCart() {
-//        try {
-//            Long cartId = cartService.createNewCart();
-//            return ResponseEntity.status(CREATED).body(new APIResponse("Cart created successfully", cartId));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new APIResponse(e.getMessage(), null));
-//        }
-//    }
+    @PostMapping("/create")
+    public ResponseEntity<APIResponse> createCart() {
+        try {
+            Long cartId = cartService.createNewCart();
+            return ResponseEntity.status(CREATED).body(new APIResponse("Cart created successfully", cartId));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new APIResponse(e.getMessage(), null));
+        }
+    }
 }
