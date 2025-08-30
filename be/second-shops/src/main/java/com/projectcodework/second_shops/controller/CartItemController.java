@@ -8,6 +8,7 @@ import com.projectcodework.second_shops.response.APIResponse;
 import com.projectcodework.second_shops.service.cart.ICartItemService;
 import com.projectcodework.second_shops.service.cart.ICartService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +57,7 @@ public class CartItemController {
         }
     }
 
+    @Operation(summary = "Remove Cart Item", description = "Remove an item from the cart")
     @DeleteMapping("/{cartId}/items/{productId}")
     public ResponseEntity<APIResponse> removeItemFromCart(@PathVariable Long cartId,
                                                           @PathVariable Long productId) {
@@ -69,6 +71,7 @@ public class CartItemController {
         }
     }
 
+    @Operation(summary = "Update Cart Item Quantity", description = "Update the quantity of a cart item")
     @PutMapping("/{cartId}/items/{productId}/quantity")
     public ResponseEntity<APIResponse> updateItemQuantity(@PathVariable Long cartId,
                                                           @PathVariable Long productId,
@@ -83,6 +86,7 @@ public class CartItemController {
         }
     }
 
+    @Operation(summary = "Get Cart Item", description = "Retrieve a cart item by its cart ID and product ID")
     @GetMapping("/{cartId}/items/{productId}")
     public ResponseEntity<APIResponse> getCartItem(@PathVariable Long cartId,
                                                    @PathVariable Long productId) {

@@ -7,6 +7,8 @@ import com.projectcodework.second_shops.mapper.OrderMapper;
 import com.projectcodework.second_shops.model.Order;
 import com.projectcodework.second_shops.response.APIResponse;
 import com.projectcodework.second_shops.service.order.IOrderService;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ public class OrderController {
     private final IOrderService orderService;
     private final OrderMapper orderMapper;
 
+    @Operation(summary = "Place Order", description = "Place a new order for a user")
     @PostMapping("/place/{userId}")
     public ResponseEntity<APIResponse> placeOrder(@PathVariable Long userId) {
         try {
@@ -39,6 +42,7 @@ public class OrderController {
         }
     }
 
+    @Operation(summary = "Get Order", description = "Retrieve an order by its ID")  
     @GetMapping("/{orderId}")
     public ResponseEntity<APIResponse> getOrder(@PathVariable Long orderId) {
         try {
@@ -51,6 +55,7 @@ public class OrderController {
         }
     }
 
+    @Operation(summary = "Get User Orders", description = "Retrieve all orders for a specific user")
     @GetMapping("/user/{userId}")
     public ResponseEntity<APIResponse> getUserOrders(@PathVariable Long userId) {
         try {
@@ -66,6 +71,7 @@ public class OrderController {
         }
     }
 
+    @Operation(summary = "Update Order Status", description = "Update the status of an existing order")
     @PutMapping("/{orderId}/status")
     public ResponseEntity<APIResponse> updateOrderStatus(@PathVariable Long orderId, 
                                                         @RequestParam OrderStatus orderStatus) {
@@ -79,6 +85,7 @@ public class OrderController {
         }
     }
 
+    @Operation(summary = "Cancel Order", description = "Cancel an existing order")
     @PutMapping("/{orderId}/cancel")
     public ResponseEntity<APIResponse> cancelOrder(@PathVariable Long orderId) {
         try {

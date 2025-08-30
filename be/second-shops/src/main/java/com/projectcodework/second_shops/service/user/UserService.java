@@ -39,9 +39,8 @@ public class UserService implements IUserService {
                 request.getFirstName(),
                 request.getLastName(),
                 request.getEmail(),
-                request.getPassword() // In production, this should be hashed
+                request.getPassword() //TODO : NEED HASH HERE
         );
-
         return userRepository.save(user);
     }
 

@@ -8,6 +8,8 @@ import com.projectcodework.second_shops.request.AddProductRequest;
 import com.projectcodework.second_shops.request.ProductUpdateRequest;
 import com.projectcodework.second_shops.response.APIResponse;
 import com.projectcodework.second_shops.service.product.IProductService;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,28 +26,31 @@ public class ProductController {
     private final IProductService productService;
     private final ProductMapper productMapper;
 
+    @Operation(summary = "Get All Products", description = "Retrieve a list of all products")
     @GetMapping("/all")
     public ResponseEntity<APIResponse> getAllProducts() {
         List<Product> products = productService.getAllProducts();
 
-        //2 METHOD OF TRANSFER
+        // 2 METHOD OF TRANSFER
         List<ProductDto> productDtos = productMapper.mapToProductDtos(products);
-        //List<ProductDto> dtos= productService.getConvertedProducts(products);
+        // List<ProductDto> dtos= productService.getConvertedProducts(products);
         return ResponseEntity.ok(new APIResponse("success", productDtos));
     }
 
+    @Operation(summary = "Get Product By ID", description = "Retrieve a product by its ID")
     @GetMapping("/{productId}/product")
     public ResponseEntity<APIResponse> getProductById(@PathVariable Long productId) {
         try {
             Product product = productService.getProductById(productId);
             ProductDto productDto = productMapper.mapToProductDto(product);
-            //ProductDto productDto1 = productService.convertToDto(product);
+            // ProductDto productDto1 = productService.convertToDto(product);
             return ResponseEntity.ok(new APIResponse("success", productDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse(e.getMessage(), null));
         }
     }
 
+    @Operation(summary = "Add Product", description = "Add a new product")
     @PostMapping("/add")
     public ResponseEntity<APIResponse> addProduct(@RequestBody AddProductRequest addProductRequest) {
         try {
@@ -58,6 +63,7 @@ public class ProductController {
 
     }
 
+    @Operation(summary = "Update Product", description = "Update an existing product")
     @PutMapping("/{productId}/update")
     public ResponseEntity<APIResponse> updateProduct(@RequestBody ProductUpdateRequest request,
             @PathVariable Long productId) {
@@ -70,6 +76,7 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Delete Product", description = "Delete an existing product")
     @DeleteMapping("/{productId}/delete")
     public ResponseEntity<APIResponse> deleteProduct(@PathVariable Long productId) {
         try {
@@ -80,6 +87,7 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Get Product By Brand And Name", description = "Retrieve a product by its brand and name")
     @GetMapping("/by/brand-and-name")
     public ResponseEntity<APIResponse> getProductByBrandAndName(@RequestParam String brand, @RequestParam String name) {
         try {
@@ -88,9 +96,10 @@ public class ProductController {
             if (products.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse("No product found", null));
             }
-            //2 method
+            // 2 method
             List<ProductDto> productDtos = productMapper.mapToProductDtos(products);
-            //List<ProductDto> productDtos1 = productService.getConvertedProducts(products);
+            // List<ProductDto> productDtos1 =
+            // productService.getConvertedProducts(products);
 
             return ResponseEntity.ok(new APIResponse("success", productDtos));
         } catch (ResourceNotFoundException e) {
@@ -98,6 +107,7 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Get Product By Category And Brand", description = "Retrieve a product by its category and brand")
     @GetMapping("/by/category-and-brand")
     public ResponseEntity<APIResponse> getProductByCategoryAndBrand(@RequestParam String category,
             @RequestParam String brand) {
@@ -113,6 +123,7 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Get Product By Name", description = "Retrieve a product by its name")
     @GetMapping("/{name}/products")
     public ResponseEntity<APIResponse> getProductByName(@PathVariable String name) {
         try {
@@ -127,6 +138,7 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Get Product By Brand", description = "Retrieve a product by its brand")
     @GetMapping("/by-brand")
     public ResponseEntity<APIResponse> getProductByBrand(@RequestParam String brand) {
         try {
@@ -139,6 +151,7 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Get Product By Category", description = "Retrieve a product by its category")
     @GetMapping("/by-category")
     public ResponseEntity<APIResponse> getProductByCategory(@RequestParam String category) {
         try {
@@ -153,6 +166,7 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Count Products By Brand And Name", description = "Count products by brand and name")
     @GetMapping("/count/by-brand/by-name")
     public ResponseEntity<APIResponse> countProductCountByBrandAndName(@RequestParam String brand,
             @RequestParam String name) {

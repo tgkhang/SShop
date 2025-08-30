@@ -5,6 +5,8 @@ import com.projectcodework.second_shops.exceptions.ResourceNotFoundException;
 import com.projectcodework.second_shops.model.Category;
 import com.projectcodework.second_shops.response.APIResponse;
 import com.projectcodework.second_shops.service.category.ICategoryService;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import java.util.List;
 public class CategoryController {
     private final ICategoryService categoryService;
 
+    @Operation(summary = "Get All Categories", description = "Retrieve a list of all product categories")
     @GetMapping("/all")
     public ResponseEntity<APIResponse> getAllCategories() {
         try {
@@ -31,6 +34,7 @@ public class CategoryController {
         }
     }
 
+    @Operation(summary = "Add New Category", description = "Add a new product category")
     @PostMapping("/add")
     public ResponseEntity<APIResponse> addCategory(@RequestBody Category categoryName) {
         try {
@@ -41,6 +45,7 @@ public class CategoryController {
         }
     }
 
+    @Operation(summary = "Get Category by ID", description = "Retrieve a category by its ID")
     @GetMapping("/category/{id}/category")
     public ResponseEntity<APIResponse> getCategoryById(@PathVariable Long id) {
         try {
@@ -51,6 +56,7 @@ public class CategoryController {
         }
     }
 
+    @Operation(summary = "Get Category by Name", description = "Retrieve a category by its name")
     @GetMapping("/category/{name}/category")
     public ResponseEntity<APIResponse> getCategoryByName(@PathVariable String name) {
         try {
@@ -61,6 +67,7 @@ public class CategoryController {
         }
     }
 
+    @Operation(summary = "Delete Category by ID", description = "Delete a category by its ID")
     @DeleteMapping("/category/{id}/delete")
     public ResponseEntity<APIResponse> deleteCategoryById(@PathVariable Long id) {
         try {
@@ -71,8 +78,9 @@ public class CategoryController {
         }
     }
 
+    @Operation(summary = "Update Category", description = "Update an existing category")
     @PutMapping("/category/{id}/update")
-    public ResponseEntity<APIResponse> UpdateCategory(@PathVariable Long id, @RequestBody Category category) {
+    public ResponseEntity<APIResponse> updateCategory(@PathVariable Long id, @RequestBody Category category) {
         try {
             Category updatedCategory = categoryService.updateCategory(category, id);
             return ResponseEntity.ok(new APIResponse("Update Success", updatedCategory));

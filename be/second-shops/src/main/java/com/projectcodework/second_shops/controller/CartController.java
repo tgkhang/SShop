@@ -6,6 +6,7 @@ import com.projectcodework.second_shops.mapper.CartMapper;
 import com.projectcodework.second_shops.model.Cart;
 import com.projectcodework.second_shops.response.APIResponse;
 import com.projectcodework.second_shops.service.cart.ICartService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class CartController {
     private final ICartService cartService;
     private final CartMapper cartMapper;
 
+    @Operation(summary = "Get Cart", description = "Retrieve a cart by its ID")
     @GetMapping("/{cartId}")
     public ResponseEntity<APIResponse> getCart(@PathVariable Long cartId) {
         try {
@@ -36,6 +38,7 @@ public class CartController {
         }
     }
 
+    @Operation(summary = "Clear Cart", description = "Clear all items from the cart")
     @DeleteMapping("/{cartId}")
     public ResponseEntity<APIResponse> clearCart(@PathVariable Long cartId) {
         try {
@@ -48,6 +51,7 @@ public class CartController {
         }
     }
 
+    @Operation(summary = "Get Total Price", description = "Get the total price of all items in the cart")
     @GetMapping("/{cartId}/total-price")
     public ResponseEntity<APIResponse> getTotalPrice(@PathVariable Long cartId) {
         try {
@@ -60,6 +64,7 @@ public class CartController {
         }
     }
 
+    @Operation(summary = "Create Cart", description = "Create a new shopping cart")
     @PostMapping("/create")
     public ResponseEntity<APIResponse> createCart() {
         try {
