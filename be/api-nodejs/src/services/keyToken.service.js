@@ -1,0 +1,19 @@
+import { keyTokenSchema } from '../models/keytoken.model'
+
+class KeyTokenService {
+  static createKeyToken = async (userId, publicKey) => {
+    try {
+      const publicKeyString = publicKey.toString()
+      const tokens = await keyTokenSchema.create({
+        user: userId,
+        publicKey: publicKeyString,
+      })
+
+      return tokens ? tokens.publicKey : null
+    } catch (err) {
+      return err
+    }
+  }
+}
+
+export { KeyTokenService }

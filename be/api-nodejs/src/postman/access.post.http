@@ -1,0 +1,11 @@
+@url_dev=http://localhost:8010
+
+//signup
+POST {{url_dev}}/shop/signup
+Content-Type: application/json
+
+{
+    "name": "Khang TG",
+    "email": "tgkhang22@clc.fitus.edu.vn",
+    "password": "Demo@123"
+}
