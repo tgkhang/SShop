@@ -2,13 +2,13 @@
 import express from 'express'
 import cors from 'cors'
 import { env } from './configs/environment.js'
-// import { APIs_V1 } from './routes/v1/index.js'
 // import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware.js'
 import { corsOptions } from './configs/cors.js'
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import compression from 'compression'
+import { APIs_V1 } from './routes/v1/index.js'
 
 const app = express()
 
@@ -38,11 +38,15 @@ app.use(cors(corsOptions)) // Enable CORS for all routes by default
 
 // Middleware to parse JSON request bodies, enable request json body data
 app.use(express.json())
-// app.use('/v1', APIs_V1)
+app.use(express.urlencoded({ extended: true })) // Enable URL-encoded request bodies
+
+app.use('/health', (req, res) => {
+  res.status(200).send('OK')
+})
+
+app.use('/v1', APIs_V1)
 
 // Middleware for handling errors globally
 // app.use(errorHandlingMiddleware)
-
-app.use(express.urlencoded({ extended: true })) // Enable URL-encoded request bodies
 
 export default app

@@ -2,7 +2,6 @@ import mongoose from 'mongoose'
 import { env } from '../configs/environment.js'
 import { checkOverload, countConnection } from '../helpers/check.connect.js'
 
-
 class Database {
   constructor() {
     this._connect()

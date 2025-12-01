@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import os from 'os'
 
-const _SECONDS = 30000
+const _SECONDS = 300000
 
 export const countConnection = () => {
   const num = mongoose.connections.length
@@ -23,5 +23,5 @@ export const checkOverload = () => {
     if (numConnection > maxConnections) {
       console.warn(`Warning: High number of connections detected! (${numConnection} connections)`)
     }
-  }, _SECONDS) //moniotor every 5 seconds
+  }, _SECONDS) //moniotor every _SECONDS milliseconds
 }

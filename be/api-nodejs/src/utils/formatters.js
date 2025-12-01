@@ -1,4 +1,4 @@
-import { pick } from 'lodash'
+import pick from 'lodash/pick.js'
 
 // ex : "My New Board!" => "my-new-board"
 export const slugify = (val) => {
@@ -15,15 +15,9 @@ export const slugify = (val) => {
 
 export const pickUser = (user) => {
   if (!user) return null
-  return pick(user, [
-    '_id',
-    'email',
-    'username',
-    'displayName',
-    'avatar',
-    'role',
-    'isActive',
-    'createdAt',
-    'updatedAt',
-  ])
+  return pick(user, ['_id', 'email', 'username', 'displayName', 'avatar', 'role', 'isActive', 'createdAt', 'updatedAt'])
+}
+
+export const getInfoData = (fields = [], object = {}) => {
+  return pick(object, fields)
 }

@@ -18,13 +18,18 @@ var keyTokenSchema = new Schema(
       required: true,
       trim: true,
     },
-    refreshToken: {
-      type: Array,
-      default: [],
-    },
-    password: {
+    privateKey: {
       type: String,
       required: true,
+      trim: true,
+    },
+    refreshToken: {
+      type: String,
+      default: '',
+    },
+    refreshTokensUsed: {
+      type: Array,
+      default: [],
     },
   },
   {
@@ -33,4 +38,6 @@ var keyTokenSchema = new Schema(
   }
 )
 
-export { keyTokenSchema, DOCUMENT_NAME, COLLECTION_NAME }
+const KeyTokenModel = model(DOCUMENT_NAME, keyTokenSchema)
+
+export { KeyTokenModel, keyTokenSchema, DOCUMENT_NAME, COLLECTION_NAME }
