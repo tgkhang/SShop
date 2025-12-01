@@ -1,4 +1,4 @@
-import { KeyTokenModel } from '../models/keytoken.model.js'
+import { KeyTokenModel } from '#models/keytoken.model.js'
 
 class KeyTokenService {
   static createKeyToken = async (userId, publicKey, privateKey) => {

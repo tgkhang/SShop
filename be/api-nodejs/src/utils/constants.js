@@ -1,4 +1,4 @@
-import { env } from '../configs/environment.js'
+import { env } from '#configs/environment.js'
 
 export const WHITELIST_DOMAINS = ['http://localhost:5173', 'https://trello-clone-gamma-lime.vercel.app']
 

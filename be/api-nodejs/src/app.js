@@ -1,14 +1,15 @@
 /* eslint-disable no-console */
 import express from 'express'
 import cors from 'cors'
-import { env } from './configs/environment.js'
-// import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware.js'
-import { corsOptions } from './configs/cors.js'
+import { env } from '#configs/environment.js'
+// import { errorHandlingMiddleware } from '#middlewares/errorHandlingMiddleware.js'
+import { corsOptions } from '#configs/cors.js'
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import compression from 'compression'
-import { APIs_V1 } from './routes/v1/index.js'
+import { APIs_V1 } from '#routes/v1/index.js'
+import { StatusCodes } from 'http-status-codes'
 
 const app = express()
 
@@ -48,5 +49,22 @@ app.use('/v1', APIs_V1)
 
 // Middleware for handling errors globally
 // app.use(errorHandlingMiddleware)
+
+app.use((req, res, next) => {
+  const error = new Error('Not Found')
+  error.status = StatusCodes.NOT_FOUND
+  next(error)
+})
+
+app.use((error, req, res, next) => {
+  res.status(error.status || StatusCodes.INTERNAL_SERVER_ERROR)
+  res.json({
+    error: {
+      status: error.status,
+      code: error.code,
+      message: error.message || 'Internal Server Error',
+    },
+  })
+})
 
 export default app

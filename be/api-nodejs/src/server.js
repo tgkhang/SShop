@@ -1,8 +1,8 @@
 import exitHook from 'async-exit-hook' //// https://www.npmjs.com/package/async-exit-hook
 import mongoose from 'mongoose'
-import { env } from './configs/environment.js'
-import app from './app.js'
-import './dbs/init.mongodb.js'
+import { env } from '#configs/environment.js'
+import app from '#app.js'
+import '#dbs/init.mongodb.js'
 
 const START_SERVER = () => {
   const hostname = env.LOCAL_DEV_APP_HOST || 'localhost'

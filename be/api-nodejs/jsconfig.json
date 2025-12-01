@@ -5,7 +5,7 @@
     "target": "ES2022",
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
+      "#*": ["./src/*"]
     },
     "checkJs": false,
     "allowSyntheticDefaultImports": true,
