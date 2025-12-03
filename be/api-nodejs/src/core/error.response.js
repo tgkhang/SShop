@@ -25,14 +25,32 @@ class ErrorReponse extends Error {
 
 class ConflictRequestError extends ErrorReponse {
   constructor(message, statusCode) {
-    super(message || 'Conflict Request', statusCode || StatusCodes.CONFLICT)
+    super(statusCode || StatusCodes.CONFLICT, message || 'Conflict Request')
   }
 }
 
 class BadRequestError extends ErrorReponse {
   constructor(message, statusCode) {
-    super(message || 'Bad Request', statusCode || StatusCodes.BAD_REQUEST)
+    super(statusCode || StatusCodes.BAD_REQUEST, message || 'Bad Request')
   }
 }
 
-export { ErrorReponse, ConflictRequestError, BadRequestError }
+class AuthFailureError extends ErrorReponse {
+  constructor(message, statusCode) {
+    super(statusCode || StatusCodes.UNAUTHORIZED, message || 'Unauthorized')
+  }
+}
+
+class NotFoundError extends ErrorReponse {
+  constructor(message, statusCode) {
+    super(statusCode || StatusCodes.NOT_FOUND, message || 'Not Found')
+  }
+}
+
+class ForbiddenError extends ErrorReponse {
+  constructor(message, statusCode) {
+    super(statusCode || StatusCodes.FORBIDDEN, message || 'Forbidden')
+  }
+}
+
+export { ErrorReponse, ConflictRequestError, BadRequestError, AuthFailureError, NotFoundError, ForbiddenError }

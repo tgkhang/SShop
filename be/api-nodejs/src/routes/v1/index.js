@@ -1,7 +1,8 @@
 import express from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { acessRouter } from '#routes/v1/access/index.js'
+import { accessRouter } from '#routes/v1/access/index.js'
 import { apiKey, permission } from '#auth/checkAuthen.js'
+import { productRouter } from './product/index.js'
 const Router = express.Router()
 
 // Check APIv1 status
@@ -15,6 +16,8 @@ Router.use(apiKey)
 // permission
 Router.use(permission('read'))
 
-Router.use('/shop', acessRouter)
+Router.use('/shop', accessRouter)
+
+Router.use('/product', productRouter)
 
 export const APIs_V1 = Router

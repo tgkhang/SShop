@@ -10,3 +10,55 @@ x-api-key: ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
     "email": "tgkhang22@clc.fitus",
     "password": "Demo@123"
 }
+
+###
+
+//login
+POST {{url_dev}}/v1/shop/login
+Content-Type: application/json
+x-api-key: ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+
+{
+    "email": "tgkhang22@clc.fitus",
+    "password": "Demo@123"
+}
+
+###
+
+//logout
+# NOTE: Replace x-client-id and authorization with values from login response
+# x-client-id = shop._id from login response
+# authorization = tokens.accessToken from login response
+POST {{url_dev}}/v1/shop/logout
+Content-Type: application/json
+x-api-key: ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+x-client-id: YOUR_USER_ID_HERE
+authorization: YOUR_ACCESS_TOKEN_HERE
+
+
+###
+
+//logout
+# NOTE: Replace x-client-id and authorization with values from login response
+# x-client-id = shop._id from login response
+# authorization = tokens.accessToken from login response
+POST {{url_dev}}/v1/shop/logout
+Content-Type: application/json
+x-api-key: ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+x-client-id: 692c89f99b99687d40001051
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjQ3MzU4NDksImV4cCI6MTc2NDkwODY0OX0.KZ0-fbJKkOvrwoA5ocA6h2LSTFoZTCfLX_4HVFmvbOI
+
+###
+
+//refresh-token
+# NOTE: Replace x-client-id and refreshToken in body with values from login response
+# x-client-id = shop._id from login response
+# refreshToken = tokens.refreshToken from login response
+POST {{url_dev}}/v1/shop/refresh-token
+Content-Type: application/json
+x-api-key: ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+x-client-id: 692c89f99b99687d40001051
+
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjQ3NDQ1NTcsImV4cCI6MTc2NTM0OTM1N30.QdY2Q7mUqtHFgWQhhg7h9ZHmrmoz8gNnltipReXj0lY"
+}

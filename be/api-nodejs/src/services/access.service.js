@@ -1,15 +1,13 @@
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import { StatusCodes } from 'http-status-codes'
-import mongoose from 'mongoose'
 import jwt from 'jsonwebtoken'
-import { shopSchema, DOCUMENT_NAME as ShopDocumentName } from '#models/shop.model.js'
-import { createTokenPair } from '#auth/authUtils.js'
+import { ShopModel } from '#models/shop.model.js'
+import { createTokenPair, verifyToken } from '#auth/authUtils.js'
 import { KeyTokenService } from '#services/keyToken.service.js'
 import { getInfoData } from '#utils/formatters.js'
-import { BadRequestError } from '#core/error.response'
-
-const shopModel = mongoose.model(ShopDocumentName, shopSchema)
+import { AuthFailureError, BadRequestError, ForbiddenError } from '#core/error.response.js'
+import { ShopService } from './shop.service.js'
 
 const RoleShop = {
   SHOP: 'shop',
@@ -19,8 +17,38 @@ const RoleShop = {
 }
 
 class AccessService {
+  // 1. check email exist
+  // 2. match password
+  // 3. create AT, RT
+  // 4. generat token (?)
+  // 5. get data shop return
+  static login = async ({ email, password, refreshToken = null }) => {
+    const shop = await ShopService.findByEmail({ email })
+    if (!shop) {
+      throw new BadRequestError('Shop not registered')
+    }
+
+    //2
+    const match = await bcrypt.compare(password, shop.password)
+    if (!match) {
+      throw new AuthFailureError('Password is incorrect')
+    }
+
+    //3
+    const privateKey = crypto.randomBytes(64).toString('hex')
+    const publicKey = crypto.randomBytes(64).toString('hex')
+    const token = await createTokenPair({ userId: shop._id, email }, publicKey, privateKey)
+
+    await KeyTokenService.createKeyToken(shop._id, publicKey, privateKey, token.refreshToken)
+
+    return {
+      shop: getInfoData(['_id', 'name', 'email'], shop),
+      tokens: token,
+    }
+  }
+
   static signUp = async ({ name, email, password }) => {
-    const holderShop = await shopModel.findOne({ email }).lean()
+    const holderShop = await ShopModel.findOne({ email }).lean()
 
     if (holderShop) {
       // return {
@@ -31,7 +59,7 @@ class AccessService {
     }
     const passwordHash = await bcrypt.hash(password, 10)
 
-    const newShop = await shopModel.create({
+    const newShop = await ShopModel.create({
       name,
       email,
       password: passwordHash,
@@ -51,7 +79,7 @@ class AccessService {
       //   },
       // })
 
-      //simpl
+      //simple version
       const privateKey = crypto.randomBytes(64).toString('hex')
       const publicKey = crypto.randomBytes(64).toString('hex')
 
@@ -93,6 +121,60 @@ class AccessService {
       code: StatusCodes.INTERNAL_SERVER_ERROR,
       message: 'Shop registration failed',
       metadata: null,
+    }
+  }
+
+  static logout = async ({ keyStore }) => {
+    const delKey = await KeyTokenService.removeKeyById(keyStore._id)
+    console.log('Deleted key:', delKey)
+    return {
+      acknowledged: true,
+      deletedCount: delKey ? 1 : 0,
+    }
+  }
+
+  static handlerRefreshToken = async ({ refreshToken }) => {
+    // check token are used
+    const foundToken = await KeyTokenService.findByRefreshTokenUsed(refreshToken)
+
+    // found == cute
+    if (foundToken) {
+      // who are you?
+      const { userId, email } = await verifyToken(refreshToken, foundToken.privateKey)
+
+      console.log({ userId, email })
+
+      // delete all token in db
+      await KeyTokenService.removeKeyById(userId)
+      throw new ForbiddenError('Something went wrong! Please login again')
+    }
+
+    const holderToken = await KeyTokenService.findByRefreshToken(refreshToken)
+
+    if (!holderToken) throw new AuthFailureError('Shop not registered')
+
+    // verify token
+    const { userId, email } = await verifyToken(refreshToken, holderToken.privateKey)
+
+    // check userId
+    const foundShop = await ShopService.findById(userId)
+
+    if (!foundShop) throw new AuthFailureError('Shop not registered')
+
+    // create new token
+    const tokens = await createTokenPair({ userId, email }, holderToken.publicKey, holderToken.privateKey)
+
+    // update token
+    const updateResult = await holderToken.updateOne({
+      $set: { refreshToken: tokens.refreshToken },
+      $addToSet: { refreshTokenUsed: refreshToken },
+    })
+
+    console.log('Update result:', updateResult)
+
+    return {
+      shop: getInfoData(['_id', 'name', 'email'], foundShop),
+      tokens,
     }
   }
 }

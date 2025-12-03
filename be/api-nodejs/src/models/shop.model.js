@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 
 const DOCUMENT_NAME = 'Shop'
 const COLLECTION_NAME = 'Shops'
@@ -31,4 +31,6 @@ var shopSchema = new Schema(
   }
 )
 
-export { shopSchema, DOCUMENT_NAME, COLLECTION_NAME }
+const ShopModel = mongoose.model(DOCUMENT_NAME, shopSchema)
+
+export { shopSchema, ShopModel, DOCUMENT_NAME, COLLECTION_NAME }

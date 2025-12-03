@@ -1,0 +1,42 @@
+### Create Clothing Product
+@url_dev=http://localhost:8010
+POST {{url_dev}}/v1/product
+Content-Type: application/json
+x-api-key: ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjQ3ODIwMDIsImV4cCI6MTc2NDk1NDgwMn0.n64AFbQNh6dh1vpl4pkkm5QHKyOB4gzniB95RfLH_D0
+x-client-id: 692c89f99b99687d40001051
+
+{
+  "product_name": "Summer T-Shirt",
+  "product_thumb": "https://example.com/images/tshirt.jpg",
+  "product_description": "Comfortable cotton t-shirt perfect for summer",
+  "product_price": 29.99,
+  "product_quantity": 100,
+  "product_type": "Clothing",
+  "product_attributes": {
+    "brand": "Nike",
+    "size": "M",
+    "material": "100% Cotton"
+  }
+}
+
+### Create Electronics Product
+POST {{url_dev}}/v1/product
+Content-Type: application/json
+x-api-key: ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjQ3ODIwMDIsImV4cCI6MTc2NDk1NDgwMn0.n64AFbQNh6dh1vpl4pkkm5QHKyOB4gzniB95RfLH_D0
+x-client-id: 692c89f99b99687d40001051
+
+{
+  "product_name": "Wireless Mouse",
+  "product_thumb": "https://example.com/images/mouse.jpg",
+  "product_description": "Ergonomic wireless mouse with long battery life",
+  "product_price": 49.99,
+  "product_quantity": 50,
+  "product_type": "Electronics",
+  "product_attributes": {
+    "manufacturer": "Logitech",
+    "model": "MX Master 3",
+    "color": "Black"
+  }
+}
