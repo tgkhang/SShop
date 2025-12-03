@@ -86,6 +86,54 @@ export const authentication = asyncHandler(async (req, res, next) => {
   }
 })
 
+export const authenticationV2 = asyncHandler(async (req, res, next) => {
+  // 1 check userid missing
+  // 2 get accesstoken
+  // 3 verify token
+  // 4 check user in dbs
+  // 5 check keyStore with user id
+
+  const userId = req.headers[HEADER.CLIENT_ID]
+  if (!userId) throw new AuthFailureError('Invalid request!')
+
+  const keyStore = await KeyTokenService.findByUserId(userId)
+  if (!keyStore) throw new NotFoundError('Not found keyStore')
+
+  // V2: Handle refresh token endpoint - get token from header instead of body
+  if (req.headers[HEADER.REFRESH_TOKEN]) {
+    try {
+      const refreshToken = req.headers[HEADER.REFRESH_TOKEN]
+      const decoded = await jwt.verify(refreshToken, keyStore.privateKey)
+      if (userId !== decoded.userId) {
+        throw new AuthFailureError('Invalid user!')
+      }
+      req.refreshToken = refreshToken
+      req.keyStore = keyStore
+      req.user = decoded
+      return next()
+    } catch (error) {
+      throw error
+    }
+  }
+
+  // Verify access token for other endpoints
+  const accessToken = req.headers[HEADER.AUTHORIZATION]
+  if (!accessToken) throw new AuthFailureError('Invalid request!')
+
+  try {
+    const decoded = jwt.verify(accessToken, keyStore.privateKey)
+    if (userId !== decoded.userId) {
+      throw new AuthFailureError('Invalid user!')
+    }
+    req.keyStore = keyStore
+    req.user = decoded
+
+    next()
+  } catch (error) {
+    throw error
+  }
+})
+
 export const verifyToken = async (token, keySecret) => {
   return await jwt.verify(token, keySecret)
 }

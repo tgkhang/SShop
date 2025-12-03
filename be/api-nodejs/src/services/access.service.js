@@ -133,7 +133,54 @@ class AccessService {
     }
   }
 
-  static handlerRefreshToken = async ({ refreshToken }) => {
+  static handlerRefreshToken = async ({ refreshToken, user, keyStore }) => {
+    // V2: Token already verified in middleware, user and keyStore are provided
+    // Check if this refresh token was already used (security check)
+    const foundToken = await KeyTokenService.findByRefreshTokenUsed(refreshToken)
+
+    if (foundToken) {
+      // Token reuse detected - possible attack
+      const { userId, email } = user
+
+      console.log('[SECURITY] Refresh token reuse detected:', { userId, email })
+
+      // Delete all tokens for this user (force re-login)
+      await KeyTokenService.removeKeyById(userId)
+      throw new ForbiddenError('Something went wrong! Please login again')
+    }
+
+    // Get the keyToken document (not lean) so we can call updateOne on it
+    const holderToken = await KeyTokenService.findByRefreshToken(refreshToken)
+
+    if (!holderToken) throw new AuthFailureError('Invalid refresh token')
+
+    // Get user info from decoded token (already verified in middleware)
+    const { userId, email } = user
+
+    // Check if user still exists
+    const foundShop = await ShopService.findById(userId)
+
+    if (!foundShop) throw new AuthFailureError('Shop not registered')
+
+    // Create new token pair using the keyStore from middleware
+    const tokens = await createTokenPair({ userId, email }, keyStore.publicKey, keyStore.privateKey)
+
+    // Update token in database: set new refresh token and mark old one as used
+    // Use holderToken (Mongoose document) not keyStore (plain object)
+    const updateResult = await holderToken.updateOne({
+      $set: { refreshToken: tokens.refreshToken },
+      $addToSet: { refreshTokenUsed: refreshToken },
+    })
+
+    console.log('Token refresh successful:', { userId, updateResult })
+
+    return {
+      shop: getInfoData(['_id', 'name', 'email'], foundShop),
+      tokens,
+    }
+  }
+
+  static handlerRefreshTokenV1 = async ({ refreshToken }) => {
     // check token are used
     const foundToken = await KeyTokenService.findByRefreshTokenUsed(refreshToken)
 

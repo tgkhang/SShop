@@ -34,6 +34,8 @@ class AccessController {
       message: 'Get new token successfully',
       metadata: await AccessService.handlerRefreshToken({
         refreshToken: req.refreshToken,
+        user: req.user,
+        keyStore: req.keyStore,
       }),
     }).send(res)
   }
