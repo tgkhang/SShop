@@ -1,10 +1,15 @@
-### Create Clothing Product
 @url_dev=http://localhost:8010
+@api_key=ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+@client_id=692c89f99b99687d40001051
+@access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjQ4NjY2NDcsImV4cCI6MTc2NTAzOTQ0N30.lNcYTalVziAoAa1t1x5PAaKzQdSP-4jWXDZEmqXifiE
+
+
+### Create Clothing Product
 POST {{url_dev}}/v1/product
 Content-Type: application/json
-x-api-key: ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjQ3ODIwMDIsImV4cCI6MTc2NDk1NDgwMn0.n64AFbQNh6dh1vpl4pkkm5QHKyOB4gzniB95RfLH_D0
-x-client-id: 692c89f99b99687d40001051
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
 
 {
   "product_name": "Summer T-Shirt",
@@ -23,9 +28,9 @@ x-client-id: 692c89f99b99687d40001051
 ### Create Electronics Product
 POST {{url_dev}}/v1/product
 Content-Type: application/json
-x-api-key: ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+x-api-key: {{api_key}}
 authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjQ3ODIwMDIsImV4cCI6MTc2NDk1NDgwMn0.n64AFbQNh6dh1vpl4pkkm5QHKyOB4gzniB95RfLH_D0
-x-client-id: 692c89f99b99687d40001051
+x-client-id: {{client_id}}
 
 {
   "product_name": "Wireless Mouse",
@@ -40,3 +45,90 @@ x-client-id: 692c89f99b99687d40001051
     "color": "Black"
   }
 }
+
+### Create Furniture Product
+POST {{url_dev}}/v1/product
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjQ4MzcxNDQsImV4cCI6MTc2NTAwOTk0NH0.zr-M-yqlgaWt6mmidCvQo0XekHJiuqH3EA11rdC7RVU
+x-client-id: {{client_id}}
+
+{
+  "product_name": "Wooden Dining Table",
+  "product_thumb": "https://example.com/images/dining_table.jpg",
+  "product_description": "Elegant wooden dining table that seats six",
+  "product_price": 299.99,
+  "product_quantity": 20,
+  "product_type": "Furniture",
+  "product_attributes": {
+    "brand": "Ikea",
+    "size": "6ft x 3ft",
+    "material": "Solid Wood"
+  }
+}
+
+
+### Find All Products 
+GET {{url_dev}}/v1/product/?limit=10&skip=0
+x-api-key: {{api_key}}
+
+### Get Single Product by ID
+GET {{url_dev}}/v1/product/693177943d32a26354023851
+x-api-key: {{api_key}}
+
+
+### Get All Draft Products for a Shop
+GET {{url_dev}}/v1/product/drafts/all?limit=10&skip=0
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+
+
+### Get All Published Products for a Shop
+GET {{url_dev}}/v1/product/published/all?limit=10&skip=0
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+
+### Publish a Product
+PUT {{url_dev}}/v1/product/publish/693177943d32a26354023851
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+
+### Search Products - Example 1: Search by single keyword
+# Returns results sorted by relevance score
+GET {{url_dev}}/v1/product/search/table
+x-api-key: {{api_key}}
+
+
+### Search Products - Example 2: Search by multiple keywords
+# Searches for products containing "wireless mouse" in product_name or product_description
+# MongoDB text search treats this as an OR query by default (finds "wireless" OR "mouse")
+# Use quotes for phrase matching: "wireless mouse" searches for the exact phrase
+GET {{url_dev}}/v1/product/search/dining tablee
+x-api-key: {{api_key}}
+
+
+### Search Products - Example 3: Search with special characters
+# Searches for products with "t-shirt" or "cotton"
+# MongoDB text search handles common punctuation automatically
+GET {{url_dev}}/v1/product/search/t-shirt cotton
+x-api-key: {{api_key}}
+
+
+### Get All Products with Pagination
+# Public route - no authentication required
+# Query parameters: limit (items per page), page (page number), sort (ctime or -ctime)
+GET {{url_dev}}/v1/product?limit=20&page=1&sort=ctime
+x-api-key: {{api_key}}
+
+### Get Single Product by ID
+# Public route - no authentication required
+# Replace the ID with an actual product ID from your database
+GET {{url_dev}}/v1/product/6931537571194fc9cd8fce39
+x-api-key: {{api_key}}
+
