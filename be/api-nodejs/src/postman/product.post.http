@@ -12,16 +12,16 @@ authorization: {{access_token}}
 x-client-id: {{client_id}}
 
 {
-  "product_name": "Summer T-Shirt",
+  "product_name": "Test",
   "product_thumb": "https://example.com/images/tshirt.jpg",
   "product_description": "Comfortable cotton t-shirt perfect for summer",
   "product_price": 29.99,
   "product_quantity": 100,
   "product_type": "Clothing",
   "product_attributes": {
-    "brand": "Nike",
-    "size": "M",
-    "material": "100% Cotton"
+    "brand": "Nikaae",
+    "size": "noM",
+    "material": "xx"
   }
 }
 
@@ -73,7 +73,7 @@ GET {{url_dev}}/v1/product/?limit=10&skip=0
 x-api-key: {{api_key}}
 
 ### Get Single Product by ID
-GET {{url_dev}}/v1/product/693177943d32a26354023851
+GET {{url_dev}}/v1/product/6931537571194fc9cd8fce39
 x-api-key: {{api_key}}
 
 
@@ -132,3 +132,20 @@ x-api-key: {{api_key}}
 GET {{url_dev}}/v1/product/6931537571194fc9cd8fce39
 x-api-key: {{api_key}}
 
+
+### Update a Product
+PATCH {{url_dev}}/v1/product/69326f1852fa45b5d0da17be
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "product_type": "Clothing",
+  "product_attributes": {
+    "material": "abc super"
+  },
+  "product_name": "UAAAt",
+  "product_price": 35.99,
+  "product_description": "Updated comfortable cotton t-shirt"
+}

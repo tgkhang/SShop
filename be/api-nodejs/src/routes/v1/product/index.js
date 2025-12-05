@@ -16,6 +16,9 @@ router.use(authenticationV2)
 // Create new product
 router.post('', asyncHandler(ProductController.createProduct))
 
+// Update product
+router.patch('/:product_id', asyncHandler(ProductController.updateProduct))
+
 //query
 router.get('/drafts/all', asyncHandler(ProductController.getAllDraftsForShop))
 
