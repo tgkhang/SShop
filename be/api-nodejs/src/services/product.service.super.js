@@ -5,6 +5,7 @@ import { ClothingModel, ElectronicsModel, FurnitureModel, ProductModel } from '#
 import { PRODUCT_TYPES } from '#configs/product.config.js'
 import { ProductRepo } from '#models/repository/product.repo.js'
 import { removeUndefinedObject, updateNestedObjectParse } from '#utils/index.js'
+import { InventoryRepo } from '#models/repository/inventory.repo.js'
 
 //define factory class to create product
 class ProductFactory {
@@ -96,10 +97,20 @@ class Product {
 
   // creaate new Product
   async createProduct(product_id) {
-    return await ProductModel.create({
+    const newProduct = await ProductModel.create({
       ...this,
       _id: product_id,
     })
+
+    if (newProduct) {
+      await InventoryRepo.insertInventory({
+        productId: newProduct._id,
+        shopId: this.product_shop,
+        stock: this.product_quantity,
+      })
+    }
+
+    return newProduct
   }
 
   async updateProduct(productId, bodyUpdate) {

@@ -1,7 +1,7 @@
 @url_dev=http://localhost:8010
 @api_key=ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
 @client_id=692c89f99b99687d40001051
-@access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjQ4NjY2NDcsImV4cCI6MTc2NTAzOTQ0N30.lNcYTalVziAoAa1t1x5PAaKzQdSP-4jWXDZEmqXifiE
+@access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjQ5MjE5NzYsImV4cCI6MTc2NTA5NDc3Nn0.e-XWdzNt0Ph93f9YaQmKfDj6EBTRCu_iLsf394VUY7I
 
 
 ### Create Clothing Product
@@ -29,7 +29,7 @@ x-client-id: {{client_id}}
 POST {{url_dev}}/v1/product
 Content-Type: application/json
 x-api-key: {{api_key}}
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjQ3ODIwMDIsImV4cCI6MTc2NDk1NDgwMn0.n64AFbQNh6dh1vpl4pkkm5QHKyOB4gzniB95RfLH_D0
+authorization: {{access_token}}
 x-client-id: {{client_id}}
 
 {
