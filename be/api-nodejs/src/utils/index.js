@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import mongoose from 'mongoose'
 
 export const getInfoData = (field = [], object = {}) => {
   return _.pick(object, field)
@@ -21,23 +22,20 @@ export const removeUndefinedObject = (obj) => {
   return obj
 }
 
-
-
-// ex 
+// ex
 // {
 //   c: {
 //     d: 1,
 //     e: 2
 //   },
 //   f: 3
-  
+
 // }
 
-// to 
+// to
 // c.d: 1
 // c.e: 2
 // f: 3
-
 
 export const updateNestedObjectParse = (obj, parentKey = '', updateObj = {}) => {
   if (obj === null || typeof obj !== 'object') {
@@ -55,3 +53,5 @@ export const updateNestedObjectParse = (obj, parentKey = '', updateObj = {}) => 
 
   return updateObj
 }
+
+export const convertToObjectId = (id) => mongoose.Types.ObjectId(id)

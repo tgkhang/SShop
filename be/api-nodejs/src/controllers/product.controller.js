@@ -3,7 +3,7 @@ import { SuccessResponse } from '#core/success.response.js'
 // v1
 // import { ProductService } from '#services/product.service.js'
 // v2 super
-import { ProductService } from '#services/product.service.super.js'
+import { ProductService } from '#services/super.product.service.js'
 
 class ProductController {
   createProduct = async (req, res, next) => {
