@@ -1,0 +1,294 @@
+@url_dev=http://localhost:8010
+@api_key=ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+@client_id=692c89f99b99687d40001051
+@access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjUxMzQyMDcsImV4cCI6MTc2NTMwNzAwN30.rIuqNFwZTmkHa3o2N6xWaRvj_6jYwNlxe2SytDSypCs
+
+### ============================================
+### CART API TESTS
+### ============================================
+
+
+### 1. Get User Cart
+# Returns the current user's active cart
+# Requires authentication
+GET {{url_dev}}/v1/cart
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+
+### 2. Add Product to Cart
+# Adds a new product to the cart or increases quantity if already exists
+# Requires authentication
+POST {{url_dev}}/v1/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "productId": "693074669f21432cf5d9c941",
+  "quantity": 2,
+  "price": 29.99,
+  "name": "Comfortable Cotton T-Shirt",
+  "shopId": "692c89f99b99687d40001051"
+}
+
+
+### 3. Add Another Product to Cart
+# Example: Adding electronics product
+POST {{url_dev}}/v1/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "productId": "69326f1852fa45b5d0da17be",
+  "quantity": 1,
+  "price": 49.99,
+  "name": "Wireless Mouse",
+  "shopId": "692c89f99b99687d40001051"
+}
+
+
+### 4. Update Cart (Change Quantity)
+# Updates product quantity in cart
+# Use quantity difference: if old_quantity is 2 and new quantity is 5, set quantity to 5
+# If quantity is 0, the product will be removed from cart
+PATCH {{url_dev}}/v1/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "item_products": [
+        {
+          "productId": "693074669f21432cf5d9c941",
+          "quantity": 5,
+          "old_quantity": 2,
+          "price": 29.99,
+          "shopId": "692c89f99b99687d40001051"
+        }
+      ]
+    }
+  ]
+}
+
+
+### 5. Update Cart - Decrease Quantity
+# Example: Decreasing quantity from 5 to 3
+PATCH {{url_dev}}/v1/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "item_products": [
+        {
+          "productId": "693074669f21432cf5d9c941",
+          "quantity": 3,
+          "old_quantity": 5,
+          "price": 29.99,
+          "shopId": "692c89f99b99687d40001051"
+        }
+      ]
+    }
+  ]
+}
+
+
+### 6. Update Cart - Remove Product (Set Quantity to 0)
+# Setting quantity to 0 will remove the product from cart
+PATCH {{url_dev}}/v1/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "item_products": [
+        {
+          "productId": "693074669f21432cf5d9c941",
+          "quantity": 0,
+          "old_quantity": 3,
+          "price": 29.99,
+          "shopId": "692c89f99b99687d40001051"
+        }
+      ]
+    }
+  ]
+}
+
+
+### 7. Delete Specific Item from Cart
+# Removes a specific product from the cart by productId
+DELETE {{url_dev}}/v1/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "productId": "69326f1852fa45b5d0da17be"
+}
+
+
+### 8. Clear Entire Cart
+# Removes all products from the cart (deletes the entire cart)
+DELETE {{url_dev}}/v1/cart/clear
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+
+### ============================================
+### TEST SCENARIOS
+### ============================================
+
+
+### Scenario 1: Fresh Cart - Add Multiple Products
+# Step 1: Add first product
+POST {{url_dev}}/v1/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "productId": "PRODUCT_ID_1",
+  "quantity": 2,
+  "price": 29.99,
+  "name": "Product 1",
+  "shopId": "692c89f99b99687d40001051"
+}
+
+###
+# Step 2: Add second product
+POST {{url_dev}}/v1/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "productId": "PRODUCT_ID_2",
+  "quantity": 1,
+  "price": 99.99,
+  "name": "Product 2",
+  "shopId": "692c89f99b99687d40001051"
+}
+
+###
+# Step 3: View cart
+GET {{url_dev}}/v1/cart
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+
+### Scenario 2: Add Same Product Twice (Should Increase Quantity)
+# Step 1: Add product first time
+POST {{url_dev}}/v1/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "productId": "6931537571194fc9cd8fce39",
+  "quantity": 2,
+  "price": 29.99,
+  "name": "T-Shirt",
+  "shopId": "692c89f99b99687d40001051"
+}
+
+###
+# Step 2: Add same product again (should update quantity)
+POST {{url_dev}}/v1/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "productId": "6931537571194fc9cd8fce39",
+  "quantity": 3,
+  "price": 29.99,
+  "name": "T-Shirt",
+  "shopId": "692c89f99b99687d40001051"
+}
+
+
+### ============================================
+### ERROR SCENARIOS
+### ============================================
+
+
+### Test 1: Update Cart with Non-Existent Product
+# Should return "Product not found" error
+PATCH {{url_dev}}/v1/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "item_products": [
+        {
+          "productId": "000000000000000000000000",
+          "quantity": 5,
+          "old_quantity": 2,
+          "price": 29.99,
+          "shopId": "692c89f99b99687d40001051"
+        }
+      ]
+    }
+  ]
+}
+
+
+### Test 2: Update Cart with Wrong Shop ID
+# Should return "Product does not belong to this shop" error
+PATCH {{url_dev}}/v1/cart
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "shop_order_ids": [
+    {
+      "shopId": "000000000000000000000000",
+      "item_products": [
+        {
+          "productId": "6931537571194fc9cd8fce39",
+          "quantity": 5,
+          "old_quantity": 2,
+          "price": 29.99,
+          "shopId": "000000000000000000000000"
+        }
+      ]
+    }
+  ]
+}
+
+
+### Test 3: Access Cart Without Authentication
+# Should return 401 Unauthorized
+GET {{url_dev}}/v1/cart
+x-api-key: {{api_key}}
