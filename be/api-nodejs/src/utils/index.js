@@ -54,4 +54,4 @@ export const updateNestedObjectParse = (obj, parentKey = '', updateObj = {}) => 
   return updateObj
 }
 
-export const convertToObjectId = (id) => mongoose.Types.ObjectId(id)
+export const convertToObjectId = (id) => new mongoose.Types.ObjectId(id)

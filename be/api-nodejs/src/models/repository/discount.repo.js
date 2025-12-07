@@ -1,6 +1,7 @@
 'use strict'
 
 import { DiscountModel } from '#models/discount.model.js'
+import { NotFoundError } from '#core/error.response.js'
 
 const findAllDiscountCodesUnselected = async ({ limit = 50, page = 1, sort = 'ctime', filter, unSelect, model }) => {
   const skip = (page - 1) * limit
@@ -10,7 +11,7 @@ const findAllDiscountCodesUnselected = async ({ limit = 50, page = 1, sort = 'ct
     .sort(sortBy)
     .skip(skip)
     .limit(limit)
-    .select(select.join(' '))
+    .select(unSelect.map(field => `-${field}`).join(' '))
     .lean()
     .exec()
 
@@ -32,8 +33,14 @@ const findAllDiscountCodesSelected = async ({ limit = 50, page = 1, sort = 'ctim
   return products
 }
 
-const checkDiscountExist = async (model, filter, lean = true) => {
+const checkDiscountExist = async ({ model, filter, lean = true }) => {
   const foundDiscount = await model.findOne(filter).lean(lean)
+
+  if (!foundDiscount) {
+    throw new NotFoundError('Discount not found')
+  }
+
+  return foundDiscount
 }
 
 export const DiscountRepo = { findAllDiscountCodesUnselected, findAllDiscountCodesSelected, checkDiscountExist }

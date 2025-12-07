@@ -81,7 +81,7 @@ class DiscountService {
     //...
   }
 
-  static async getAllDiscountsCodeWithProducts({ code, shopId, userId, limit, page }) {
+  static async getAllDiscountCodesWithProducts({ code, shopId, userId, limit, page }) {
     const foundDiscount = await DiscountModel.findOne({
       discount_code: code,
       discount_shopId: convertToObjectId(shopId),

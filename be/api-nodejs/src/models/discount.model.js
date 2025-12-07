@@ -21,7 +21,7 @@ const DiscountSchema = new mongoose.Schema(
     discount_max_user_uses: { type: Number, default: 1 }, // max uses per user
     discount_min_order_value: { type: Number, default: 0 }, // minimum order value to apply discount
     discount_shopId: { type: Schema.Types.ObjectId, ref: 'Shop', required: true },
-    discount_is_ative: { type: Boolean, default: true },
+    discount_is_active: { type: Boolean, default: true },
     discount_applies_to: {
       type: String,
       default: 'all_products',
