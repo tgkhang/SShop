@@ -57,10 +57,20 @@ const deleteUserCart = async ({ userId }) => {
   return await CartModel.findOneAndDelete(query).lean().exec()
 }
 
+const findCartById = async ({ cartId }) => {
+  return await CartModel.findById(cartId).lean().exec()
+}
+
+const findActiveCartById = async ({ cartId }) => {
+  return await CartModel.findOne({ _id: cartId, cart_state: 'active' }).lean().exec()
+}
+
 export const CartRepo = {
   createUserCart,
   updateUserCartQuantity,
   deleteCartItem,
   findUserCart,
   deleteUserCart,
+  findCartById,
+  findActiveCartById,
 }

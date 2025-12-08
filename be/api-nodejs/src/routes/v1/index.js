@@ -5,6 +5,7 @@ import { apiKey, permission } from '#auth/checkAuthen.js'
 import { productRouter } from './product/index.js'
 import { discountRouter } from './discount/index.js'
 import { cartRouter } from './cart/index.js'
+import { checkoutRouter } from './checkout/index.js'
 const Router = express.Router()
 
 // Check APIv1 status
@@ -25,5 +26,7 @@ Router.use('/product', productRouter)
 Router.use('/discount', discountRouter)
 
 Router.use('/cart', cartRouter)
+
+Router.use('/checkout', checkoutRouter)
 
 export const APIs_V1 = Router

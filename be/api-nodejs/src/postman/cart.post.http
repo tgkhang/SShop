@@ -1,7 +1,7 @@
 @url_dev=http://localhost:8010
 @api_key=ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
 @client_id=692c89f99b99687d40001051
-@access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjUxMzQyMDcsImV4cCI6MTc2NTMwNzAwN30.rIuqNFwZTmkHa3o2N6xWaRvj_6jYwNlxe2SytDSypCs
+@access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjUxNjYyNDQsImV4cCI6MTc2NTMzOTA0NH0.0LXFdXYXLliqN70pg5d06UzhIbqVrwmLdk4lh0XH12g
 
 ### ============================================
 ### CART API TESTS

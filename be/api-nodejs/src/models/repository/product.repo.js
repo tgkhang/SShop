@@ -1,5 +1,6 @@
 'use strict'
 
+import { NotFoundError } from '#core/error.response.js'
 import { ProductModel } from '#models/product.model.js'
 
 // general query product
@@ -113,6 +114,34 @@ const getProductById = async ({ productId, model, unSelect = [] }) => {
     .exec()
 }
 
+const checkProductByServer = async (products) => {
+  return Promise.all(
+    products.map(async (product) => {
+      const foundProduct = await ProductModel.findById(product.productId)
+        .select('product_price product_quantity product_name product_shop product_thumb')
+        .lean()
+        .exec()
+
+      if (!foundProduct) {
+        throw new NotFoundError(`Product not found with id: ${product.productId}`)
+      }
+
+      // check quantity
+      if (foundProduct.product_quantity < product.quantity) {
+        throw new Error(
+          `Product ${foundProduct.product_name} is out of stock. Available quantity: ${foundProduct.product_quantity}`
+        )
+      }
+
+      return {
+        ...foundProduct,
+        price: foundProduct.product_price,
+        quantity: product.quantity,
+      }
+    })
+  )
+}
+
 export const ProductRepo = {
   findAllDraftsForShop,
   findAllPublishForShop,
@@ -123,4 +152,5 @@ export const ProductRepo = {
   findProduct,
   updateProductById,
   getProductById,
+  checkProductByServer,
 }

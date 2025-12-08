@@ -1,0 +1,488 @@
+@url_dev=http://localhost:8010
+@api_key=ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+@client_id=692c89f99b99687d40001051
+@access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjUxNjYyNDQsImV4cCI6MTc2NTMzOTA0NH0.0LXFdXYXLliqN70pg5d06UzhIbqVrwmLdk4lh0XH12g
+
+### ============================================
+### CHECKOUT API TESTS
+### ============================================
+
+
+### 1. Checkout Review - No Discounts
+# Reviews the checkout order and calculates totals
+# Validates products, checks stock availability, and calculates pricing
+# Requires authentication and an active cart
+POST {{url_dev}}/v1/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "cartId": "69364cebe2602728842d734e",
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "shop_discounts": [],
+      "item_products": [
+        {
+          "productId": "693074669f21432cf5d9c941",
+          "quantity": 2,
+          "price": 29.99
+        },
+        {
+          "productId": "69326f1852fa45b5d0da17be",
+          "quantity": 1,
+          "price": 49.99
+        }
+      ]
+    }
+  ]
+}
+
+
+### 2. Checkout Review - With Single Discount Code
+# Apply a discount code to the order
+# The discount will be validated and applied to the total
+POST {{url_dev}}/v1/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "cartId": "69364cebe2602728842d734e",
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "shop_discounts": [
+        {
+          "shopId": "692c89f99b99687d40001051",
+          "discountId": "6935ba38e62bc896939931d2",
+          "code": "SUMMER20"
+        }
+      ],
+      "item_products": [
+        {
+          "productId": "693074669f21432cf5d9c941",
+          "quantity": 2,
+          "price": 29.99
+        },
+        {
+          "productId": "69326f1852fa45b5d0da17be",
+          "quantity": 1,
+          "price": 49.99
+        }
+      ]
+    }
+  ]
+}
+
+
+### 3. Checkout Review - Multiple Shops
+# Handle checkout for products from different shops
+# Each shop can have its own discounts applied
+POST {{url_dev}}/v1/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "cartId": "69364cebe2602728842d734e",
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "shop_discounts": [
+        {
+          "shopId": "692c89f99b99687d40001051",
+          "discountId": "DISCOUNT_ID_1",
+          "code": "SHOP1SAVE"
+        }
+      ],
+      "item_products": [
+        {
+          "productId": "693074669f21432cf5d9c941",
+          "quantity": 2,
+          "price": 29.99
+        }
+      ]
+    },
+    {
+      "shopId": "ANOTHER_SHOP_ID",
+      "shop_discounts": [],
+      "item_products": [
+        {
+          "productId": "PRODUCT_FROM_SHOP_2",
+          "quantity": 1,
+          "price": 99.99
+        }
+      ]
+    }
+  ]
+}
+
+
+### 4. Checkout Review - Large Order
+# Test with multiple products and higher quantities
+POST {{url_dev}}/v1/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "cartId": "YOUR_CART_ID",
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "shop_discounts": [],
+      "item_products": [
+        {
+          "productId": "693074669f21432cf5d9c941",
+          "quantity": 5,
+          "price": 29.99
+        },
+        {
+          "productId": "69326f1852fa45b5d0da17be",
+          "quantity": 3,
+          "price": 49.99
+        },
+        {
+          "productId": "PRODUCT_ID_3",
+          "quantity": 2,
+          "price": 19.99
+        }
+      ]
+    }
+  ]
+}
+
+
+### ============================================
+### ERROR SCENARIOS
+### ============================================
+
+
+### Test 1: Checkout with Invalid Cart ID
+# Should return "Cart not found" error
+POST {{url_dev}}/v1/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "cartId": "000000000000000000000000",
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "shop_discounts": [],
+      "item_products": [
+        {
+          "productId": "693074669f21432cf5d9c941",
+          "quantity": 2,
+          "price": 29.99
+        }
+      ]
+    }
+  ]
+}
+
+
+### Test 2: Checkout with Non-Existent Product
+# Should return "Product not found" error from checkProductByServer
+POST {{url_dev}}/v1/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "cartId": "YOUR_CART_ID",
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "shop_discounts": [],
+      "item_products": [
+        {
+          "productId": "000000000000000000000000",
+          "quantity": 2,
+          "price": 29.99
+        }
+      ]
+    }
+  ]
+}
+
+
+### Test 3: Checkout with Insufficient Stock
+# Should return error if quantity exceeds available stock
+POST {{url_dev}}/v1/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "cartId": "YOUR_CART_ID",
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "shop_discounts": [],
+      "item_products": [
+        {
+          "productId": "693074669f21432cf5d9c941",
+          "quantity": 999999,
+          "price": 29.99
+        }
+      ]
+    }
+  ]
+}
+
+
+### Test 4: Checkout with Invalid Discount Code
+# Should return discount validation error
+POST {{url_dev}}/v1/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "cartId": "YOUR_CART_ID",
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "shop_discounts": [
+        {
+          "shopId": "692c89f99b99687d40001051",
+          "discountId": "INVALID_ID",
+          "code": "INVALIDCODE"
+        }
+      ],
+      "item_products": [
+        {
+          "productId": "693074669f21432cf5d9c941",
+          "quantity": 2,
+          "price": 29.99
+        }
+      ]
+    }
+  ]
+}
+
+
+### Test 5: Checkout Without Authentication
+# Should return 401 Unauthorized
+POST {{url_dev}}/v1/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+
+{
+  "cartId": "YOUR_CART_ID",
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "shop_discounts": [],
+      "item_products": [
+        {
+          "productId": "693074669f21432cf5d9c941",
+          "quantity": 2,
+          "price": 29.99
+        }
+      ]
+    }
+  ]
+}
+
+
+### Test 6: Checkout with Empty Product List
+# Should return "No products available for checkout" error
+POST {{url_dev}}/v1/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "cartId": "YOUR_CART_ID",
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "shop_discounts": [],
+      "item_products": []
+    }
+  ]
+}
+
+
+### ============================================
+### WORKFLOW SCENARIOS
+### ============================================
+
+
+### Scenario 1: Complete Checkout Flow
+# Step 1: Get user's cart to obtain cartId
+GET {{url_dev}}/v1/cart
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+###
+# Step 2: Review checkout with products from cart
+POST {{url_dev}}/v1/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "cartId": "CART_ID_FROM_STEP_1",
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "shop_discounts": [],
+      "item_products": [
+        {
+          "productId": "693074669f21432cf5d9c941",
+          "quantity": 2,
+          "price": 29.99
+        }
+      ]
+    }
+  ]
+}
+
+###
+# Step 3: After review, proceed to create order (to be implemented)
+# POST {{url_dev}}/v1/checkout/order
+
+
+### Scenario 2: Apply Discount and Review
+# Step 1: Get available discounts
+GET {{url_dev}}/v1/discount?limit=10&page=1
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+###
+# Step 2: Review checkout with discount code
+POST {{url_dev}}/v1/checkout/review
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "cartId": "YOUR_CART_ID",
+  "shop_order_ids": [
+    {
+      "shopId": "692c89f99b99687d40001051",
+      "shop_discounts": [
+        {
+          "shopId": "692c89f99b99687d40001051",
+          "discountId": "DISCOUNT_ID_FROM_STEP_1",
+          "code": "DISCOUNT_CODE_FROM_STEP_1"
+        }
+      ],
+      "item_products": [
+        {
+          "productId": "693074669f21432cf5d9c941",
+          "quantity": 2,
+          "price": 29.99
+        }
+      ]
+    }
+  ]
+}
+
+
+### ============================================
+### NOTES
+### ============================================
+#
+# Checkout Request Structure:
+# {
+#   "cartId": "string",                 // Cart ID from user's active cart
+#   "shop_order_ids": [                 // Array of shop orders
+#     {
+#       "shopId": "string",             // Shop/Seller ID
+#       "shop_discounts": [             // Optional discount codes (can be empty array)
+#         {
+#           "shopId": "string",         // Must match parent shopId
+#           "discountId": "string",     // Discount ID from database
+#           "code": "string"            // Discount code (e.g., "SAVE10")
+#         }
+#       ],
+#       "item_products": [              // Products to checkout
+#         {
+#           "productId": "string",      // Product ID
+#           "quantity": number,         // Quantity to purchase
+#           "price": number             // Product price (for validation)
+#         }
+#       ]
+#     }
+#   ]
+# }
+#
+# Checkout Response Structure:
+# {
+#   "shop_order_ids": [...],            // Original request data
+#   "shop_order_ids_new": [             // Processed order data with server validation
+#     {
+#       "shopId": "string",
+#       "shop_discounts": [...],
+#       "priceRaw": number,             // Total before discount
+#       "priceApplyDiscount": number,   // Total after discount
+#       "item_products": [              // Products validated against server
+#         {
+#           "price": number,            // Server-validated price
+#           "quantity": number,         // Requested quantity
+#           "product_name": "string",   // Product name
+#           "product_shop": "string",   // Shop ID
+#           ...                         // Other product fields
+#         }
+#       ]
+#     }
+#   ],
+#   "checkout_orders": {
+#     "totalPrice": number,             // Total before discounts
+#     "feeShip": number,                // Shipping fee (currently 0)
+#     "totalDiscount": number,          // Total discount amount
+#     "totalCheckout": number           // Final total (totalPrice - totalDiscount + feeShip)
+#   }
+# }
+#
+# What the Checkout Review Does:
+# 1. Validates cart exists and is active
+# 2. Validates all products exist and have sufficient stock (checkProductByServer)
+# 3. Calculates raw total price
+# 4. Applies discount codes if provided
+# 5. Calculates final checkout total
+# 6. Returns detailed breakdown for user review
+#
+# Product Validation (checkProductByServer):
+# - Checks if product exists in database
+# - Verifies sufficient stock is available
+# - Returns server-side validated product data
+# - Throws error if product not found or insufficient stock
+#
+# Discount Application:
+# - Only first discount code in array is applied (shop_discounts[0])
+# - Discount is validated through DiscountService.getDiscountAmount()
+# - Discount validation includes:
+#   - Code exists and is active
+#   - User is eligible
+#   - Minimum order value met
+#   - Product applicability
+#   - Usage limits not exceeded
+#
+# Next Steps After Checkout Review:
+# - User reviews the calculated totals
+# - User confirms order
+# - System creates order (POST /v1/checkout/order - to be implemented)
+# - Cart is updated/cleared
+# - Payment processing (if applicable)
+#
