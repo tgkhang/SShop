@@ -9,4 +9,24 @@ const insertInventory = async ({ productId, shopId, stock, location = 'unknown' 
   })
 }
 
-export const InventoryRepo = { insertInventory }
+const reservationInventory = async ({ productId, quantity, cartId }) => {
+  const query = {
+    inven_productId: productId,
+    inven_stock: { $gte: quantity },
+  }
+  
+  const updateSet = {
+    $inc: { inven_stock: -quantity },
+    $push: {
+      inven_reservations: {
+        cartId,
+        quantity,
+        reservedAt: new Date(),
+      },
+    },
+  }
+  const options = { upsert: true, new: true }
+  return await InventoryModel.findOneAndUpdate(query, updateSet, options)
+}
+
+export const InventoryRepo = { insertInventory, reservationInventory }

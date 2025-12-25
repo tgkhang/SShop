@@ -212,7 +212,6 @@ const fakeToken = base64(header) + '.' + base64(fakePayload) + '.' + oldSignatur
 
 // When server verifies:
 jwt.verify(fakeToken, publicKey) // ❌ FAILS!
-// Signature doesn't match the new payload
 ```
 
 ## Key Storage Strategy

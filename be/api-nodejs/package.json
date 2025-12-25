@@ -10,7 +10,8 @@
     "start": "node src/server.js",
     "lint": "eslint src --ext js --report-unused-disable-directives --max-warnings 0",
     "dev": "cross-env BUILD_MODE=dev nodemon src/server.js",
-    "production": "cross-env BUILD_MODE=production node src/server.js"
+    "production": "cross-env BUILD_MODE=production node src/server.js",
+    "test": "node tests/run.test.js"
   },
   "dependencies": {
     "async-exit-hook": "^2.0.1",
@@ -28,6 +29,7 @@
     "mongoose": "^9.0.0",
     "morgan": "^1.10.1",
     "ms": "^2.1.3",
+    "redis": "^5.10.0",
     "slugify": "^1.6.6"
   },
   "devDependencies": {

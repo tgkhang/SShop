@@ -23,11 +23,10 @@ const CartSchema = new mongoose.Schema(
   {
     collection: COLLECTION_NAME,
     timestamps: true,
-    // timeseries: {
-    //   timeField: 'createdAt',
-    //   metaField: 'cart_userId',
-    //   granularity: 'hours',
-    // },
+    timeseries: {
+      createdAt: 'createdOn',
+      updatedAt: 'modifiedOn',
+    },
   }
 )
 

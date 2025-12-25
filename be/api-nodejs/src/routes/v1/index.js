@@ -6,6 +6,7 @@ import { productRouter } from './product/index.js'
 import { discountRouter } from './discount/index.js'
 import { cartRouter } from './cart/index.js'
 import { checkoutRouter } from './checkout/index.js'
+import { inventoryRouter } from './inventory/index.js'
 const Router = express.Router()
 
 // Check APIv1 status
@@ -28,5 +29,7 @@ Router.use('/discount', discountRouter)
 Router.use('/cart', cartRouter)
 
 Router.use('/checkout', checkoutRouter)
+
+Router.use('/inventory', inventoryRouter)
 
 export const APIs_V1 = Router

@@ -719,7 +719,3 @@ const decoded = jwt.verify(token, publicKey, {
 - [jsonwebtoken NPM Package](https://www.npmjs.com/package/jsonwebtoken)
 
 ---
-
-**Last Updated:** 2025-12-01
-**Version:** 1.0
-**Status:** HS256 Active, RS256 Ready (commented)
