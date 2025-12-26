@@ -60,3 +60,6 @@
 - **Cache Control**: No-store policy for API responses to prevent stale data
 - **Database Connection Monitoring**: Connection counting and overload detection
 - **Code Documentation**: Markdown documentation for authentication flows, patterns, and business logic
+
+
+redis pub sub, notification system

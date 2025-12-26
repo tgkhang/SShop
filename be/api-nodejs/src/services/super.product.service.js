@@ -6,6 +6,8 @@ import { PRODUCT_TYPES } from '#configs/product.config.js'
 import { ProductRepo } from '#models/repository/product.repo.js'
 import { removeUndefinedObject, updateNestedObjectParse } from '#utils/index.js'
 import { InventoryRepo } from '#models/repository/inventory.repo.js'
+import { NotificationService } from '#services/notification.service.js'
+import { NOTIFICATION_TYPES } from '#configs/notification.config.js'
 
 //define factory class to create product
 class ProductFactory {
@@ -95,7 +97,7 @@ class Product {
     this.product_attributes = product_attributes
   }
 
-  // creaate new Product
+  // create new Product
   async createProduct(product_id) {
     const newProduct = await ProductModel.create({
       ...this,
@@ -103,10 +105,25 @@ class Product {
     })
 
     if (newProduct) {
+      // Insert inventory
       await InventoryRepo.insertInventory({
         productId: newProduct._id,
         shopId: this.product_shop,
         stock: this.product_quantity,
+      })
+
+      // Push notification to system
+      // MICRO-SERVICE / MESSAGE QUEUE CAN BE IMPLEMENTED HERE
+      // ANOTHER SYSTEM WILL HANDLE NOTIFICATION DELIVERY
+      await NotificationService.pushNotificationToSystem({
+        type: NOTIFICATION_TYPES.SHOP_NEW_PRODUCT,
+        receiverId: null, // Will use mock receiver in service
+        senderId: this.product_shop, // The shop creating the product
+        options: {
+          product_name: this.product_name,
+          product_id: newProduct._id,
+          shop_name: this.product_shop,
+        },
       })
     }
 
@@ -173,6 +190,22 @@ class Electronics extends Product {
 
     return newProduct
   }
+
+  async updateProduct(productId) {
+    const objectParams = removeUndefinedObject(this)
+
+    if (objectParams.product_attributes) {
+      // Update child (electronics collection)
+      await ProductRepo.updateProductById({
+        productId,
+        bodyUpdate: updateNestedObjectParse(objectParams.product_attributes),
+        model: ElectronicsModel,
+      })
+    }
+
+    const updateProduct = await super.updateProduct(productId, updateNestedObjectParse(objectParams))
+    return updateProduct
+  }
 }
 
 class Furniture extends Product {
@@ -187,6 +220,22 @@ class Furniture extends Product {
     if (!newProduct) throw new BadRequestError('Create new product error')
 
     return newProduct
+  }
+
+  async updateProduct(productId) {
+    const objectParams = removeUndefinedObject(this)
+
+    if (objectParams.product_attributes) {
+      // Update child (furniture collection)
+      await ProductRepo.updateProductById({
+        productId,
+        bodyUpdate: updateNestedObjectParse(objectParams.product_attributes),
+        model: FurnitureModel,
+      })
+    }
+
+    const updateProduct = await super.updateProduct(productId, updateNestedObjectParse(objectParams))
+    return updateProduct
   }
 }
 

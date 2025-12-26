@@ -1,0 +1,13 @@
+@url_dev=http://localhost:8010
+@api_key=ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+@client_id=692c89f99b99687d40001051
+@access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjY3Njk5MzAsImV4cCI6MTc2Njk0MjczMH0.qbsPp7BBbiVGsyxK6_QXdypk_3pmk_OoTp8dsEXAldM
+
+
+### 1. Get All Notifications
+# Get all notifications for the current user
+GET {{url_dev}}/v1/notification
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
