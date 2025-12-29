@@ -1,0 +1,118 @@
+@url_dev=http://localhost:8010
+@api_key=ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+@client_id=692c89f99b99687d40001051
+@access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjUxMjg1NjYsImV4cCI6MTc2NTMwMTM2Nn0.76WtG2VSFKuFhgnNkjv49lI83pf2nRWoWTkq0vZ4_QE
+
+##################################################
+# DISCOUNT ENDPOINTS - AUTHENTICATED (SHOP OWNER)
+##################################################
+
+### Create Discount Code - Percentage Type
+POST {{url_dev}}/v1/discount
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "name": "Summer Sale 2024",
+  "description": "Get 20% off on all products this summer",
+  "code": "SUMMER20",
+  "type": "percentage",
+  "value": 20,
+  "max_value": 100,
+  "min_order_value": 50,
+  "max_uses": 100,
+  "max_uses_per_user": 1,
+  "startDate": "2025-12-09T00:00:00.000Z",
+  "endDate": "2026-03-31T23:59:59.999Z",
+  "is_active": true,
+  "applies_to": "all_products"
+}
+
+### Create Discount Code - Fixed Amount Type
+POST {{url_dev}}/v1/discount
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "name": "New Customer Discount",
+  "description": "Get $10 off your first order",
+  "code": "WELCOME10",
+  "type": "fixed_amount",
+  "value": 10,
+  "min_order_value": 30,
+  "max_uses": 500,
+  "max_uses_per_user": 1,
+  "startDate": "2025-12-09T00:00:00.000Z",
+  "endDate": "2026-12-31T23:59:59.999Z",
+  "is_active": true,
+  "applies_to": "all_products"
+}
+
+### Create Discount Code - Specific Products
+POST {{url_dev}}/v1/discount
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "name": "Electronics Sale",
+  "description": "15% off on selected electronics",
+  "code": "TECH2",
+  "type": "percentage",
+  "value": 15,
+  "max_value": 50,
+  "min_order_value": 100,
+  "max_uses": 50,
+  "max_uses_per_user": 1,
+  "startDate": "2025-12-07T00:00:00.000Z",
+  "endDate": "2026-01-31T23:59:59.999Z",
+  "is_active": true,
+  "applies_to": "specific_products",
+  "product_ids": ["693074669f21432cf5d9c941"]
+}
+
+### Get All Discount Codes by Shop
+# Retrieves all discount codes for the authenticated shop owner
+# Supports pagination with limit and page query parameters
+GET {{url_dev}}/v1/discount?limit=10&page=1
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+
+##################################################
+# DISCOUNT ENDPOINTS - PUBLIC (NO AUTHENTICATION)
+##################################################
+
+### Get Discount Amount
+# Calculates the discount amount for a given code and products
+# Public endpoint - no authentication required
+# Validates discount rules and returns total order, discount, and final price
+POST {{url_dev}}/v1/discount/amount
+Content-Type: application/json
+x-api-key: {{api_key}}
+
+{
+  "code": "TECH2",
+  "shopId": "692c89f99b99687d40001051",
+  "userId": "692c89f99b99687d40001051",
+  "products": [
+    {
+      "productId": "693074669f21432cf5d9c941",
+      "price": 100,
+      "quantity": 2
+    }
+  ]
+}
+
+### Get All Discount Codes With Products
+# Retrieves a discount code and the products it applies to
+# Public endpoint - no authentication required
+# Supports pagination with limit and page query parameters
+GET {{url_dev}}/v1/discount/list_product_code?code=SUMMER20&shopId=692c89f99b99687d40001051&limit=20&page=1
+x-api-key: {{api_key}}

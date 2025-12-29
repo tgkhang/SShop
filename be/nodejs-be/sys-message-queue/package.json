@@ -1,0 +1,21 @@
+{
+  "name": "sys-message-queue",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "tgkhang",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.9",
+    "dotenv": "^17.2.3",
+    "lodash": "^4.17.21",
+    "mongoose": "^9.0.2"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0"
+  }
+}

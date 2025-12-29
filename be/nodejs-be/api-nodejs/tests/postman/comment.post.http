@@ -1,0 +1,72 @@
+### ============================================
+### COMMENT API TESTS
+### ============================================
+
+@access_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjY2MzkxMjEsImV4cCI6MTc2NjgxMTkyMX0.JMUQU8sKtrKF9wthjBi2PCRYehvbvm9VWawU1Pa3qZ4
+@url_dev=http://localhost:8010
+@api_key=ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+@client_id=692c89f99b99687d40001051
+
+### ============================================
+### COMMENT CREATION TESTS
+### ============================================
+
+### 1. Create Root Comment (Top-Level Comment)
+# Creates a new comment directly on a product
+# This is a root comment (no parent)
+POST {{url_dev}}/v1/comment
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "productId": "6931537571194fc9cd8fce39",
+  "userId": "692c89f99b99687d40001051",
+  "content": "1 This is an amazing product! Highly recommend it to everyone."
+}
+
+### 2. Create Reply Comment (Nested Comment)
+# Creates a reply to an existing comment
+POST {{url_dev}}/v1/comment
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "productId": "6931537571194fc9cd8fce39",
+  "userId": "692c89f99b99687d40001051",
+  "parentCommentId": "694ccb65018ea33dd0ae52d8",
+  "content": "comment 1.2.3"
+}
+
+
+### Get list comments by productId and parentCommentId
+GET {{url_dev}}/v1/comment?productId=6931537571194fc9cd8fce39
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+
+
+### ============================================
+GET {{url_dev}}/v1/comment?productId=6931537571194fc9cd8fce39&parentCommentId=694ccb29018ea33dd0ae52cc
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+
+### delete a comment by commentId
+DELETE  {{url_dev}}/v1/comment
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "commentId": "694ce1fdfdb995e08dd571f6",
+  "productId": "6931537571194fc9cd8fce39"
+}
