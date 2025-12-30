@@ -8,7 +8,7 @@ const runProducer = async () => {
 
     // Declare a queue
     const queue = 'test-queue'
-    await channel.assertQueue(queue, { durable: false })
+    await channel.assertQueue(queue, { durable: true })
 
     // Send message
     const message = 'Hello RabbitMQ user! by kangaRoo'
