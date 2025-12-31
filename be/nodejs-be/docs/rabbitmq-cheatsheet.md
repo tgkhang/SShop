@@ -1,0 +1,1 @@
+docker exec rabbitmq-dev rabbitmqadmin delete queue --name=ordered-queue-message
