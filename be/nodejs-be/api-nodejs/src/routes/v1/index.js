@@ -9,6 +9,7 @@ import { checkoutRouter } from './checkout/index.js'
 import { inventoryRouter } from './inventory/index.js'
 import { commentRouter } from './comment/index.js'
 import { notificationRouter } from './notification/index.js'
+import { uploadRouter } from './upload/index.js'
 const Router = express.Router()
 
 // Check APIv1 status
@@ -37,5 +38,7 @@ Router.use('/inventory', inventoryRouter)
 Router.use('/comment', commentRouter)
 
 Router.use('/notification', notificationRouter)
+
+Router.use('/upload', uploadRouter)
 
 export const APIs_V1 = Router
