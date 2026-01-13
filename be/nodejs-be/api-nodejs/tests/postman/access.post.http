@@ -3,7 +3,7 @@
 //signup
 POST {{url_dev}}/v1/shop/signup
 Content-Type: application/json
-x-api-key: ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+x-api-key: 77355a68e13e536dfdd455167d5fa2d7e19be75169bb9beb410c3e891890cefe
 
 {
     "name": "Shop2",
@@ -16,7 +16,7 @@ x-api-key: ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
 //login
 POST {{url_dev}}/v1/shop/login
 Content-Type: application/json
-x-api-key: ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+x-api-key: 77355a68e13e536dfdd455167d5fa2d7e19be75169bb9beb410c3e891890cefe
 
 {
     "email": "tgkhang22@clc.fitus",

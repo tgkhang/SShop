@@ -27,6 +27,20 @@ class UploadController {
       },
     }).send(res)
   }
+
+  // S3
+  async uploadImageFromLocalToS3(req, res) {
+    console.log("here")
+    const { file } = req
+    if (!file) {
+      throw new BadRequestError('No file uploaded')
+    }
+
+    new SuccessResponse({
+      message: 'File uploaded successfully to S3',
+      metadata: await UploadService.uploadImageFromLocalS3({ file }),
+    }).send(res)
+  }
 }
 
 export default new UploadController()
