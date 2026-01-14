@@ -23,3 +23,6 @@ yarn-error.log*
 .env
 deployment sheet.md
 DEPLOYMENT.md
+src/keys
+src/keys/private_key.pem
+src/keys/public_key.pem

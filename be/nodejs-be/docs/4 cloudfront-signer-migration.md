@@ -1,0 +1,384 @@
+# CloudFront Signed URL Migration Guide
+
+## Migration from Basic CloudFront URLs to @aws-sdk/cloudfront-signer
+
+**Date**: 2026-01-14
+**Purpose**: Migrate from unsigned CloudFront URLs to signed URLs using RSA key pairs for better security
+
+---
+
+## Previous Implementation (Before Migration)
+
+### Dependencies
+```json
+{
+  "@aws-sdk/client-s3": "^3.967.0",
+  "@aws-sdk/s3-request-presigner": "^3.967.0"
+}
+```
+
+### Configuration (`src/configs/s3.config.js`)
+```javascript
+'use strict'
+
+import { S3Client } from '@aws-sdk/client-s3'
+import { env } from './environment.js'
+
+const s3Client = new S3Client({
+  region: env.AWS_REGION,
+  credentials: {
+    accessKeyId: env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+  },
+})
+
+export { s3Client }
+```
+
+### Upload Service (`src/services/upload.service.js` - S3 Method)
+```javascript
+static async uploadImageFromLocalS3({ file }) {
+  try {
+    const randomName = () => crypto.randomBytes(16).toString('hex')
+    const fileName = randomName()
+
+    const putCommand = new PutObjectCommand({
+      Bucket: env.AWS_BUCKET_NAME,
+      Key: fileName,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    })
+
+    const result = await s3Client.send(putCommand)
+    console.log('S3 Upload Result:', result)
+
+    // Construct CloudFront URL (shorter and faster than S3 signed URL)
+    const cloudFrontUrl = `https://${env.AWS_CLOUDFRONT_DOMAIN}/${fileName}`
+    console.log('CloudFront URL:', cloudFrontUrl)
+
+    // Optional: Generate S3 signed URL as fallback
+    const getCommand = new GetObjectCommand({
+      Bucket: env.AWS_BUCKET_NAME,
+      Key: fileName,
+    })
+    const s3SignedUrl = await getSignedUrl(s3Client, getCommand, { expiresIn: 3600 })
+
+    return {
+      url: cloudFrontUrl, // Primary CloudFront URL (UNSIGNED)
+      s3Url: s3SignedUrl, // Backup S3 URL (expires in 1 hour)
+      key: fileName,
+      bucket: env.AWS_BUCKET_NAME,
+    }
+  } catch (error) {
+    console.error('Error uploading image from local to S3:', error)
+    throw error
+  }
+}
+```
+
+### Environment Variables
+```env
+AWS_BUCKET_NAME=your-bucket-name
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+AWS_REGION=us-east-1
+AWS_CLOUDFRONT_DOMAIN=d15vprati1d3bt.cloudfront.net
+```
+
+---
+
+## Issues with Previous Implementation
+
+1. **No Access Control**: CloudFront URLs were unsigned, meaning anyone with the URL could access the files
+2. **No Expiration**: URLs never expired, making them vulnerable to sharing and unauthorized distribution
+3. **Limited Security**: S3 signed URLs were used as fallback, but primary CloudFront URLs had no security
+4. **No Fine-grained Control**: Could not restrict access based on time, IP, or custom policies
+
+---
+
+## New Implementation (After Migration)
+
+### New Dependencies
+```json
+{
+  "@aws-sdk/client-s3": "^3.967.0",
+  "@aws-sdk/cloudfront-signer": "^3.968.0",
+  "@aws-sdk/s3-request-presigner": "^3.967.0"
+}
+```
+
+### Setup Requirements
+
+1. **Generate RSA Key Pair** (if not already done)
+   ```bash
+   # Generate private key
+   openssl genrsa -out private_key.pem 2048
+
+   # Generate public key from private key
+   openssl rsa -pubout -in private_key.pem -out public_key.pem
+   ```
+
+2. **Store Keys Securely**
+   - Private key: `src/keys/private_key.pem` (NEVER commit to git)
+   - Public key: `src/keys/public_key.pem` (uploaded to CloudFront)
+
+3. **CloudFront Configuration**
+   - Create a Key Group in CloudFront
+   - Upload the public key to AWS CloudFront
+   - Associate the Key Group with your CloudFront distribution
+   - Note the Key Pair ID (looks like: K2JCJMDEHXQW5F)
+
+### New Configuration Files
+
+#### `src/configs/cloudfront.config.js`
+```javascript
+'use strict'
+
+import { getSignedUrl } from '@aws-sdk/cloudfront-signer'
+import { env } from './environment.js'
+import fs from 'fs'
+import path from 'path'
+
+/**
+ * Generate a signed CloudFront URL with expiration
+ * @param {string} resourceKey - The S3 key/path of the resource
+ * @param {number} expiresIn - Expiration time in seconds (default: 1 hour)
+ * @returns {string} Signed CloudFront URL
+ */
+export function getSignedCloudFrontUrl(resourceKey, expiresIn = 3600) {
+  const url = `https://${env.AWS_CLOUDFRONT_DOMAIN}/${resourceKey}`
+
+  // Read private key from file system
+  const privateKey = fs.readFileSync(
+    path.join(process.cwd(), env.AWS_CLOUDFRONT_PRIVATE_KEY_PATH),
+    'utf8'
+  )
+
+  // Calculate expiration date
+  const dateLessThan = new Date(Date.now() + expiresIn * 1000).toISOString()
+
+  // Generate signed URL
+  const signedUrl = getSignedUrl({
+    url,
+    keyPairId: env.AWS_CLOUDFRONT_KEY_PAIR_ID,
+    privateKey,
+    dateLessThan,
+  })
+
+  return signedUrl
+}
+
+/**
+ * Generate a signed CloudFront URL with custom policy
+ * @param {string} resourceKey - The S3 key/path of the resource
+ * @param {Object} options - Custom policy options
+ * @returns {string} Signed CloudFront URL with custom policy
+ */
+export function getSignedCloudFrontUrlWithCustomPolicy(resourceKey, options = {}) {
+  const url = `https://${env.AWS_CLOUDFRONT_DOMAIN}/${resourceKey}`
+
+  const privateKey = fs.readFileSync(
+    path.join(process.cwd(), env.AWS_CLOUDFRONT_PRIVATE_KEY_PATH),
+    'utf8'
+  )
+
+  const {
+    expiresIn = 3600,
+    ipAddress = null,
+    dateGreaterThan = null,
+  } = options
+
+  const policy = {
+    Statement: [
+      {
+        Resource: url,
+        Condition: {
+          DateLessThan: {
+            'AWS:EpochTime': Math.floor((Date.now() + expiresIn * 1000) / 1000),
+          },
+        },
+      },
+    ],
+  }
+
+  // Add IP restriction if specified
+  if (ipAddress) {
+    policy.Statement[0].Condition.IpAddress = {
+      'AWS:SourceIp': ipAddress,
+    }
+  }
+
+  // Add start date if specified
+  if (dateGreaterThan) {
+    policy.Statement[0].Condition.DateGreaterThan = {
+      'AWS:EpochTime': Math.floor(dateGreaterThan.getTime() / 1000),
+    }
+  }
+
+  const signedUrl = getSignedUrl({
+    url,
+    keyPairId: env.AWS_CLOUDFRONT_KEY_PAIR_ID,
+    privateKey,
+    policy: JSON.stringify(policy),
+  })
+
+  return signedUrl
+}
+```
+
+#### Updated `src/configs/environment.js`
+```javascript
+// Add these new environment variables
+AWS_CLOUDFRONT_KEY_PAIR_ID: process.env.AWS_CLOUDFRONT_KEY_PAIR_ID,
+AWS_CLOUDFRONT_PRIVATE_KEY_PATH: process.env.AWS_CLOUDFRONT_PRIVATE_KEY_PATH || 'src/keys/private_key.pem',
+```
+
+#### Updated `src/services/upload.service.js`
+```javascript
+import { getSignedCloudFrontUrl } from '#configs/cloudfront.config.js'
+
+static async uploadImageFromLocalS3({ file }) {
+  try {
+    const randomName = () => crypto.randomBytes(16).toString('hex')
+    const fileName = randomName()
+
+    const putCommand = new PutObjectCommand({
+      Bucket: env.AWS_BUCKET_NAME,
+      Key: fileName,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    })
+
+    const result = await s3Client.send(putCommand)
+    console.log('S3 Upload Result:', result)
+
+    // Generate signed CloudFront URL with 1 hour expiration
+    const signedUrl = getSignedCloudFrontUrl(fileName, 3600)
+    console.log('Signed CloudFront URL:', signedUrl)
+
+    return {
+      url: signedUrl, // Primary signed CloudFront URL (expires in 1 hour)
+      key: fileName,
+      bucket: env.AWS_BUCKET_NAME,
+      expiresIn: 3600, // seconds
+    }
+  } catch (error) {
+    console.error('Error uploading image from local to S3:', error)
+    throw error
+  }
+}
+```
+
+### Environment Variables (Add to `.env`)
+```env
+# Existing variables
+AWS_BUCKET_NAME=your-bucket-name
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+AWS_REGION=us-east-1
+AWS_CLOUDFRONT_DOMAIN=d15vprati1d3bt.cloudfront.net
+
+# New variables for CloudFront signing
+AWS_CLOUDFRONT_KEY_PAIR_ID=K2JCJMDEHXQW5F  # Your CloudFront Key Pair ID
+AWS_CLOUDFRONT_PRIVATE_KEY_PATH=src/keys/private_key.pem  # Path to private key
+```
+
+### Update `.gitignore`
+```gitignore
+# Add to .gitignore to protect private keys
+src/keys/private_key.pem
+*.pem
+```
+
+---
+
+## Benefits of New Implementation
+
+1. **Enhanced Security**: All CloudFront URLs are now signed with RSA keys
+2. **Time-based Expiration**: URLs automatically expire after the specified time
+3. **IP Restrictions**: Can optionally restrict access to specific IP addresses
+4. **Custom Policies**: Support for complex access control policies
+5. **Better Control**: Fine-grained control over who can access your resources
+6. **CloudFront Native**: Uses CloudFront's built-in signing mechanism (no S3 fallback needed)
+
+---
+
+## Migration Steps
+
+1. ✅ Install new dependency: `npm i @aws-sdk/cloudfront-signer`
+2. ✅ Generate RSA key pair and store in `src/keys/` folder
+3. ✅ Upload public key to CloudFront and create Key Group
+4. ✅ Get CloudFront Key Pair ID from AWS Console
+5. ✅ Add new environment variables to `.env`
+6. ✅ Update `src/configs/environment.js` to include new variables
+7. ✅ Create `src/configs/cloudfront.config.js` with signing functions
+8. ✅ Update `src/services/upload.service.js` to use signed URLs
+9. ✅ Update `.gitignore` to exclude private keys
+10. ✅ Test the upload and verify signed URLs work correctly
+
+---
+
+## Testing
+
+### Test Upload
+```bash
+POST http://localhost:3000/api/v1/upload/s3
+Content-Type: multipart/form-data
+
+# Upload a file and verify the response contains a signed URL
+```
+
+### Test Signed URL
+```bash
+# The returned URL should work and include query parameters like:
+# ?Expires=...&Signature=...&Key-Pair-Id=...
+```
+
+### Test Expiration
+```bash
+# Wait for the expiration time to pass
+# The URL should return 403 Forbidden after expiration
+```
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+1. **"No key pair IDs are configured"**
+   - Ensure `AWS_CLOUDFRONT_KEY_PAIR_ID` is set in `.env`
+   - Verify the Key Group is associated with your CloudFront distribution
+
+2. **"Signature mismatch"**
+   - Verify the private key matches the public key uploaded to CloudFront
+   - Check that the Key Pair ID matches the one in CloudFront
+
+3. **"Access Denied" immediately**
+   - Check CloudFront distribution settings
+   - Verify the Key Group is properly configured
+   - Ensure the public key is active in CloudFront
+
+4. **File not found errors**
+   - Verify `AWS_CLOUDFRONT_PRIVATE_KEY_PATH` points to the correct location
+   - Check file permissions on the private key file
+
+---
+
+## Security Best Practices
+
+1. **Never commit private keys** to version control
+2. **Use environment variables** for sensitive configuration
+3. **Rotate keys periodically** for enhanced security
+4. **Set appropriate expiration times** (not too long, not too short)
+5. **Use HTTPS only** for all CloudFront distributions
+6. **Monitor access logs** to detect unauthorized access attempts
+7. **Implement rate limiting** to prevent abuse
+
+---
+
+## References
+
+- [AWS CloudFront Signed URLs Documentation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-signed-urls.html)
+- [@aws-sdk/cloudfront-signer NPM Package](https://www.npmjs.com/package/@aws-sdk/cloudfront-signer)
+- [AWS SDK v3 Documentation](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/)

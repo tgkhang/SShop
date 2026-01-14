@@ -4,8 +4,8 @@ import cloudinary from '#configs/cloudinary.config.js'
 import { env } from '#configs/environment.js'
 import { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { s3Client } from '#configs/s3.config.js'
+import { getSignedCloudFrontUrl } from '#configs/cloudfront.config.js'
 import crypto from 'crypto'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 class UploadService {
   //1. Upload from url image
@@ -85,22 +85,15 @@ class UploadService {
       const result = await s3Client.send(putCommand)
       console.log('S3 Upload Result:', result)
 
-      // Construct CloudFront URL (shorter and faster than S3 signed URL)
-      const cloudFrontUrl = `https://${env.AWS_CLOUDFRONT_DOMAIN}/${fileName}`
-      console.log('CloudFront URL:', cloudFrontUrl)
-
-      // Optional: Generate S3 signed URL as fallback
-      const getCommand = new GetObjectCommand({
-        Bucket: env.AWS_BUCKET_NAME,
-        Key: fileName,
-      })
-      const s3SignedUrl = await getSignedUrl(s3Client, getCommand, { expiresIn: 3600 })
+      // Generate signed CloudFront URL with 1 hour expiration
+      const signedUrl = getSignedCloudFrontUrl(fileName, 3600)
+      console.log('Signed CloudFront URL:', signedUrl)
 
       return {
-        url: cloudFrontUrl, // Primary CloudFront URL
-        s3Url: s3SignedUrl, // Backup S3 URL (expires in 1 hour)
+        url: signedUrl, // Primary signed CloudFront URL (expires in 1 hour)
         key: fileName,
         bucket: env.AWS_BUCKET_NAME,
+        expiresIn: 3600, // seconds
       }
     } catch (error) {
       console.error('Error uploading image from local to S3:', error)
