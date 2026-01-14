@@ -1,0 +1,67 @@
+@url_dev=http://localhost:8010
+@x-api-key=77355a68e13e536dfdd455167d5fa2d7e19be75169bb9beb410c3e891890cefe
+@client-id=696610a9463e6ebf2e87e6ec
+
+### ============================================
+### 1. Get Server Time
+### ============================================
+GET {{url_dev}}/v1/test/server-time
+Content-Type: application/json
+x-api-key: {{x-api-key}}
+x-client-id: {{client-id}}
+
+### ============================================
+### 2. Generate Signed URL - Manchester (MAN)
+### ============================================
+GET {{url_dev}}/v1/test/generate-signed-url?club=man
+Content-Type: application/json
+x-api-key: {{x-api-key}}
+x-client-id: {{client-id}}
+
+### ============================================
+### 3. Generate Signed URL - PSG (TEAM2)
+### ============================================
+GET {{url_dev}}/v1/test/generate-signed-url?club=psg
+Content-Type: application/json
+x-api-key: {{x-api-key}}
+x-client-id: {{client-id}}
+
+### ============================================
+### 4. Test Valid Signed URL (Generated from server)
+### NOTE: Use the signedUrl from the response above
+### Replace the parameters with actual values from generate-signed-url endpoint
+### ============================================
+GET {{url_dev}}/v1/test/listPlayersByClub?club=man&stime=1768380729&nonce=9c8071300233cd5626b8ec7a259ee816&sign=f1286dae3e87d32926286e33b1e585ad11010c793cb2d69a8eeac4298edc8876
+Content-Type: application/json
+x-api-key: {{x-api-key}}
+x-client-id: {{client-id}}
+
+### ============================================
+### 5. Test with Invalid Signature (Should fail)
+### ============================================
+GET {{url_dev}}/v1/test/listPlayersByClub?club=man&stime=1736859600&nonce=abc123&sign=invalid_signature
+Content-Type: application/json
+x-api-key: {{x-api-key}}
+x-client-id: {{client-id}}
+
+
+
+### ============================================
+### 7. Test with Missing Parameters (Should fail)
+### ============================================
+GET {{url_dev}}/v1/test/listPlayersByClub?club=man
+Content-Type: application/json
+x-api-key: {{x-api-key}}
+x-client-id: {{client-id}}
+
+### ============================================
+### 8. Test with Missing Club Parameter (Should fail)
+### ============================================
+GET {{url_dev}}/v1/test/listPlayersByClub?stime=1736859600&nonce=abc123&sign=signature
+Content-Type: application/json
+x-api-key: {{x-api-key}}
+x-client-id: {{client-id}}
+
+
+### for nonce should use redis to store and check uniqueness (NOT IMPLEMENTED YET)
+

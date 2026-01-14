@@ -10,6 +10,7 @@ import { inventoryRouter } from './inventory/index.js'
 import { commentRouter } from './comment/index.js'
 import { notificationRouter } from './notification/index.js'
 import { uploadRouter } from './upload/index.js'
+import { testRouter } from './test/index.js'
 const Router = express.Router()
 
 // Check APIv1 status
@@ -40,5 +41,7 @@ Router.use('/comment', commentRouter)
 Router.use('/notification', notificationRouter)
 
 Router.use('/upload', uploadRouter)
+
+Router.use('/test', testRouter)
 
 export const APIs_V1 = Router
