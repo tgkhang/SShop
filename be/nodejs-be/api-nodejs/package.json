@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.967.0",
+    "@aws-sdk/s3-request-presigner": "^3.967.0",
     "amqplib": "^0.10.9",
     "async-exit-hook": "^2.0.1",
     "bcryptjs": "^3.0.3",

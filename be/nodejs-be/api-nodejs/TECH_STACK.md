@@ -64,4 +64,4 @@
 
 redis pub sub, notification system
 
-rabbitmq, message queue
+rabbitmq, message queue, s3 + cloudfront

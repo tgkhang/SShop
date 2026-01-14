@@ -2,9 +2,10 @@
 
 import cloudinary from '#configs/cloudinary.config.js'
 import { env } from '#configs/environment.js'
-import { PutObjectCommand } from '@aws-sdk/client-s3'
+import { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { s3Client } from '#configs/s3.config.js'
 import crypto from 'crypto'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 class UploadService {
   //1. Upload from url image
@@ -67,23 +68,40 @@ class UploadService {
   //   })
   // }
 
-  // Upload file use s3 client AWS S3
+  // Upload file use s3 client AWS S3 with CloudFront CDN
   static async uploadImageFromLocalS3({ file }) {
     try {
       const randomName = () => crypto.randomBytes(16).toString('hex')
+      const fileName = randomName()
 
-      const command = new PutObjectCommand({
+      const putCommand = new PutObjectCommand({
         Bucket: env.AWS_BUCKET_NAME,
         // Key: file.originalname || 'uploaded_file_' + Date.now(),
-        Key: randomName(),
+        Key: fileName,
         Body: file.buffer,
         ContentType: file.mimetype,
       })
 
-      const result = await s3Client.send(command)
+      const result = await s3Client.send(putCommand)
       console.log('S3 Upload Result:', result)
 
-      return result
+      // Construct CloudFront URL (shorter and faster than S3 signed URL)
+      const cloudFrontUrl = `https://${env.AWS_CLOUDFRONT_DOMAIN}/${fileName}`
+      console.log('CloudFront URL:', cloudFrontUrl)
+
+      // Optional: Generate S3 signed URL as fallback
+      const getCommand = new GetObjectCommand({
+        Bucket: env.AWS_BUCKET_NAME,
+        Key: fileName,
+      })
+      const s3SignedUrl = await getSignedUrl(s3Client, getCommand, { expiresIn: 3600 })
+
+      return {
+        url: cloudFrontUrl, // Primary CloudFront URL
+        s3Url: s3SignedUrl, // Backup S3 URL (expires in 1 hour)
+        key: fileName,
+        bucket: env.AWS_BUCKET_NAME,
+      }
     } catch (error) {
       console.error('Error uploading image from local to S3:', error)
       throw error
