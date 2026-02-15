@@ -26,3 +26,4 @@ DEPLOYMENT.md
 src/keys
 src/keys/private_key.pem
 src/keys/public_key.pem
+src/keys/ec2/server-shopdev-key-pair.pem
