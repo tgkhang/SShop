@@ -62,11 +62,13 @@
 **Problem**: If your single database crashes, your entire application goes down.
 
 **Solution**: With master-slave:
+
 - If master fails, promote a slave to become the new master
 - If a slave fails, other slaves continue serving read requests
 - Minimizes downtime and data loss
 
 **Example**:
+
 ```
 Normal Operation:
 Master (UP) → Slave 1 (UP), Slave 2 (UP)
@@ -84,6 +86,7 @@ Application continues with minimal interruption ✓
 **Solution**: Distribute read traffic across multiple slaves.
 
 **Real-world example**:
+
 ```
 E-commerce Application:
 - 10,000 writes/second  → Master handles this
@@ -92,6 +95,7 @@ E-commerce Application:
 ```
 
 **Benefits**:
+
 - Master focuses on writes (not overwhelmed by reads)
 - Slaves handle read-heavy workloads
 - Can add more slaves as traffic grows
@@ -103,6 +107,7 @@ E-commerce Application:
 **Solution**: Place slaves in different geographic regions.
 
 **Example**:
+
 ```
 Global E-commerce Platform:
 
@@ -122,6 +127,7 @@ Users read from nearest slave = Lower latency!
 **Solution**: Use dedicated slaves for backups and analytics.
 
 **Example**:
+
 ```
 Production Setup:
 Master → Handles production writes
@@ -137,6 +143,7 @@ Slave 3 → Runs heavy analytics queries (no production impact)
 **Solution**: Keep slaves in different data centers/regions.
 
 **Example**:
+
 ```
 Primary Data Center (US):
 Master + Slave 1
@@ -170,6 +177,7 @@ Slaves (Read Operations):
 ```
 
 **Why it works**:
+
 - Writes are relatively rare (user posts 1-10 times/day)
 - Reads are extremely frequent (users scroll hundreds of times/day)
 - **Read-to-Write ratio**: 1000:1
@@ -194,6 +202,7 @@ Slaves (Read Operations):
 ```
 
 **Peak traffic handling**:
+
 ```
 Black Friday Sale:
 - 1 Master: 50,000 writes/second (orders, cart updates)
@@ -218,6 +227,7 @@ Slaves (Read Operations):
 ```
 
 **Why it works**:
+
 - Writes are rare (10-100 articles/day)
 - Reads are massive (millions of page views/day)
 - **Read-to-Write ratio**: 10,000:1 or higher
@@ -240,6 +250,7 @@ Slaves (Read Operations):
 ```
 
 **Why it works**:
+
 - Write accuracy is critical (master ensures consistency)
 - Users frequently check balances (distribute across slaves)
 - Analytics runs on dedicated slave (no production impact)
@@ -265,10 +276,12 @@ Slaves (Read Operations):
 ```
 
 **Pros**:
+
 - Simple setup
 - Good for DR (Disaster Recovery)
 
 **Cons**:
+
 - Limited scalability
 - If slave fails, no redundancy
 
@@ -292,11 +305,13 @@ Slaves (Read Operations):
 ```
 
 **Pros**:
+
 - High read scalability
 - High availability (multiple slave redundancy)
 - Can lose slaves without impact
 
 **Cons**:
+
 - Master is single point of failure for writes
 
 ### Pattern 3: Master-Slave with Geographic Distribution
@@ -320,10 +335,12 @@ Slaves (Read Operations):
 ```
 
 **Pros**:
+
 - Low latency for global users
 - Regional data compliance possible
 
 **Cons**:
+
 - Replication lag across regions
 - Complex failover scenarios
 
@@ -345,10 +362,12 @@ Slaves (Read Operations):
 ```
 
 **Pros**:
+
 - Analytics don't slow production
 - Can configure slave differently (more memory, indexes)
 
 **Cons**:
+
 - Additional infrastructure cost
 
 ---
@@ -390,10 +409,12 @@ Master → Commits immediately (doesn't wait for slave)
 ```
 
 **Pros**:
+
 - Fast writes (no waiting)
 - Master not affected by slave issues
 
 **Cons**:
+
 - Replication lag possible
 - Data loss possible if master crashes before replication
 
@@ -410,10 +431,12 @@ Master → Commits transaction
 ```
 
 **Pros**:
+
 - Better data safety
 - At least one slave has the data
 
 **Cons**:
+
 - Slower writes (wait for slave ACK)
 - Can timeout if slaves are slow
 
@@ -428,11 +451,13 @@ Conflict detection and resolution
 ```
 
 **Pros**:
+
 - No single point of failure
 - Automatic failover
 - Strong consistency
 
 **Cons**:
+
 - More complex setup
 - Higher overhead
 
@@ -443,6 +468,7 @@ Conflict detection and resolution
 See [MASTER_SLAVE_SETUP.md](./MASTER_SLAVE_SETUP.md) for detailed Docker setup.
 
 **Quick overview**:
+
 ```bash
 # Master configuration
 [mysqld]
@@ -542,6 +568,7 @@ db.collection.find().readPref('nearest')
 ```
 
 **Use cases**:
+
 - `primary`: Financial transactions (need latest data)
 - `secondary`: Analytics, reports (can tolerate slight lag)
 - `nearest`: Global apps (reduce latency)
@@ -614,12 +641,14 @@ services:
 ### MongoDB Replication Advantages
 
 **1. Automatic Failover**
+
 ```
 Primary fails → Election in ~12 seconds → New primary elected
 Application automatically connects to new primary
 ```
 
 **2. Write Concerns** (Control consistency)
+
 ```javascript
 // Wait for majority of replicas to acknowledge
 db.users.insert(
@@ -635,6 +664,7 @@ db.users.insert(
 ```
 
 **3. Tag-based Replication** (Geographic distribution)
+
 ```javascript
 // Configure geographic tags
 rs.reconfig({
@@ -755,12 +785,14 @@ Replica catches up quickly (seconds, not minutes)
 ```
 
 **Sentinel features**:
+
 - **Monitoring**: Checks if master and replicas are working
 - **Notification**: Alerts when something is wrong
 - **Automatic Failover**: Promotes replica to master if master fails
 - **Configuration Provider**: Tells clients where current master is
 
 **Failover process**:
+
 ```
 1. Master crashes
 2. Sentinels detect failure (majority agreement)
@@ -797,12 +829,14 @@ Shard 1:              Shard 2:              Shard 3:
 ```
 
 **How it works**:
+
 - Data split across 16,384 hash slots
 - Each master handles subset of slots
 - Keys hashed to determine which slot (and thus which master)
 - Each master has replicas for HA
 
 **Example**:
+
 ```
 SET user:1000 "Alice"
      ↓
@@ -937,9 +971,10 @@ redis-sentinel sentinel.conf
 
 ## When to Use Each Database
 
-### Choose MySQL When:
+### Choose MySQL When
 
 ✅ **You need ACID transactions**
+
 ```sql
 START TRANSACTION;
 UPDATE accounts SET balance = balance - 100 WHERE user_id = 1;
@@ -948,6 +983,7 @@ COMMIT;  -- Both happen or neither happens
 ```
 
 ✅ **You have relational data with foreign keys**
+
 ```sql
 CREATE TABLE orders (
   id INT PRIMARY KEY,
@@ -957,6 +993,7 @@ CREATE TABLE orders (
 ```
 
 ✅ **You need complex JOINs**
+
 ```sql
 SELECT u.name, o.total, p.name
 FROM users u
@@ -968,14 +1005,16 @@ WHERE u.country = 'US';
 ✅ **Your schema is stable and well-defined**
 
 **Examples**:
+
 - Banking systems
 - E-commerce platforms
 - ERP systems
 - Traditional web applications
 
-### Choose MongoDB When:
+### Choose MongoDB When
 
 ✅ **You need flexible schema (schema can evolve)**
+
 ```javascript
 // Document 1 (old)
 {name: "Alice", email: "alice@example.com"}
@@ -985,6 +1024,7 @@ WHERE u.country = 'US';
 ```
 
 ✅ **You have hierarchical/nested data**
+
 ```javascript
 {
   user: "Alice",
@@ -1000,21 +1040,24 @@ WHERE u.country = 'US';
 ✅ **You want horizontal scaling (sharding)**
 
 **Examples**:
+
 - Content management systems
 - Social media platforms
 - Real-time analytics
 - Mobile app backends
 - IoT data storage
 
-### Choose Redis When:
+### Choose Redis When
 
 ✅ **You need extreme speed (microsecond latency)**
+
 ```bash
 SET session:12345 "user_data"  # < 1ms
 GET session:12345               # < 1ms
 ```
 
 ✅ **You're building a cache layer**
+
 ```javascript
 // Check cache first
 const cached = await redis.get(`product:${id}`);
@@ -1026,6 +1069,7 @@ await redis.setex(`product:${id}`, 3600, JSON.stringify(product));
 ```
 
 ✅ **You need pub/sub messaging**
+
 ```javascript
 // Publisher
 redis.publish('notifications', 'New order received');
@@ -1037,6 +1081,7 @@ redis.subscribe('notifications', (message) => {
 ```
 
 ✅ **You need data structures** (lists, sets, sorted sets, hashes)
+
 ```bash
 # Leaderboard (sorted set)
 ZADD leaderboard 1000 "player1"
@@ -1045,6 +1090,7 @@ ZREVRANGE leaderboard 0 9  # Top 10 players
 ```
 
 **Examples**:
+
 - Session storage
 - Caching layer
 - Real-time leaderboards
@@ -1226,6 +1272,7 @@ START SLAVE;
    - **Redis**: Extreme speed, caching, pub/sub, data structures
 
 3. **Common pattern**: Use multiple databases together
+
    ```
    MySQL (persistent data, transactions)
       ↓
@@ -1247,19 +1294,23 @@ START SLAVE;
 ## Additional Resources
 
 ### MySQL
+
 - [Official MySQL Replication Documentation](https://dev.mysql.com/doc/refman/8.0/en/replication.html)
 - [Setup Guide](./MASTER_SLAVE_SETUP.md)
 
 ### MongoDB
+
 - [MongoDB Replica Sets Documentation](https://www.mongodb.com/docs/manual/replication/)
 - [MongoDB Atlas (Managed Service)](https://www.mongodb.com/cloud/atlas)
 
 ### Redis
+
 - [Redis Replication Documentation](https://redis.io/docs/management/replication/)
 - [Redis Sentinel Documentation](https://redis.io/docs/management/sentinel/)
 - [Redis Cluster Tutorial](https://redis.io/docs/management/scaling/)
 
 ### Books
+
 - "High Performance MySQL" by Baron Schwartz
 - "MongoDB: The Definitive Guide" by Shannon Bradshaw
 - "Redis in Action" by Josiah Carlson

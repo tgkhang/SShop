@@ -1,9 +1,14 @@
 import crypto from 'crypto'
+import mongoose from 'mongoose'
 import apiKeyModel from '../models/apiKey.model.js'
-import '../dbs/init.mongodb.js'
+import { env } from '../configs/environment.js'
 
 const createApiKey = async () => {
   try {
+    // Connect to MongoDB
+    await mongoose.connect(env.MONGODB_URI)
+    console.log('✓ Connected to MongoDB')
+
     // Generate a random API key
     const key = crypto.randomBytes(32).toString('hex')
     
@@ -22,9 +27,10 @@ const createApiKey = async () => {
     console.log(`x-api-key: ${key}`)
     console.log('================================================')
     
+    await mongoose.connection.close()
     process.exit(0)
   } catch (error) {
-    console.error('❌ Error creating API key:', error)
+    console.error('❌ Error creating API key:', error.message)
     process.exit(1)
   }
 }
