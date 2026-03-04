@@ -10,6 +10,8 @@ import helmet from 'helmet'
 import compression from 'compression'
 import { APIs_V1 } from '#routes/v1/index.js'
 import { StatusCodes } from 'http-status-codes'
+import { v4 as uuidv4 } from 'uuid'
+import { mylogger } from '#loggers/mylogger.log.js'
 
 const app = express()
 
@@ -45,6 +47,19 @@ app.use('/health', (req, res) => {
   res.status(200).send('OK')
 })
 
+//LOG
+app.use((req, res, next) => {
+  const requestId = req.headers['x-request-id']
+  req.requestId = requestId || uuidv4()
+
+  mylogger.log('Input params ::', [
+    req.path,
+    { requestId: req.requestId },
+    req.method === 'POST' ? req.body : req.query,
+  ])
+  next()
+})
+
 app.use('/v1', APIs_V1)
 
 // Middleware for handling errors globally
@@ -57,10 +72,20 @@ app.use((req, res, next) => {
 })
 
 app.use((error, req, res, next) => {
-  res.status(error.status || StatusCodes.INTERNAL_SERVER_ERROR)
+  const statusCode = error.status || error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR
+  res.status(statusCode)
+
+  mylogger.error(`Error occurred: ${error.message}`, {
+    requestId: req.requestId,
+    statusCode,
+    method: req.method,
+    path: req.path,
+    stack: env.BUILD_MODE !== 'production' ? error.stack : undefined,
+  })
+
   res.json({
     error: {
-      status: error.status,
+      status: statusCode,
       code: error.code,
       message: error.message || 'Internal Server Error',
     },
