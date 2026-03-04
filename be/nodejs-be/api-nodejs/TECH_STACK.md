@@ -65,3 +65,5 @@
 redis pub sub, notification system
 
 rabbitmq, message queue, s3 + cloudfront
+
+discord log, winston log, 

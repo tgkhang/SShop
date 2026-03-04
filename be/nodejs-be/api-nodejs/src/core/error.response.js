@@ -1,5 +1,7 @@
 'use strict'
 
+import { mylogger } from '#loggers/mylogger.log.js'
+import { logger } from '#loggers/winston.log.js'
 import { CONFLICT, StatusCodes } from 'http-status-codes'
 
 // can use like or using library
@@ -20,6 +22,12 @@ class ErrorReponse extends Error {
 
     // Record the Stack Trace for easier debugging
     Error.captureStackTrace(this, this.constructor)
+
+    // Log to error use winston (basic version)
+    // logger.error(`[${this.statusCode}] ${message}`)
+
+    // Log to error use winston (advanced version)
+    mylogger.error(this.message, ['ErrorResponse', null, { statusCode: this.statusCode }])
   }
 }
 
