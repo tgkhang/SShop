@@ -12,6 +12,7 @@ import { notificationRouter } from './notification/index.js'
 import { uploadRouter } from './upload/index.js'
 import { testRouter } from './test/index.js'
 import { profileRouter } from './profile/index.js'
+import { rbacRouter } from './rbac/index.js'
 const Router = express.Router()
 
 // Check APIv1 status
@@ -46,5 +47,7 @@ Router.use('/upload', uploadRouter)
 Router.use('/test', testRouter)
 
 Router.use('/profile', profileRouter)
+
+Router.use('/rbac', rbacRouter)
 
 export const APIs_V1 = Router

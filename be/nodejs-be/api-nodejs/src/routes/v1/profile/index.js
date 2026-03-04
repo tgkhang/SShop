@@ -2,7 +2,7 @@ import express from 'express'
 import { asyncHandler } from '#helpers/asyncHandler.js'
 import { authenticationV2 } from '#auth/authUtils.js'
 import ProfileController from '#controllers/profile.controller.js'
-import { grantAccess } from '#middlewares/rbac'
+import { grantAccess } from '#middlewares/rbac.js'
 
 const router = express.Router()
 

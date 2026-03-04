@@ -1,5 +1,5 @@
-import { AuthFailureError } from '#core/error.response'
-import ac from './role.middleware'
+import { AuthFailureError } from '#core/error.response.js'
+import ac from './role.middleware.js'
 
 const grantAccess = (action, resource) => {
   return async (req, res, next) => {

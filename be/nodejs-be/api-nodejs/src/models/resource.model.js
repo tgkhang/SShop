@@ -1,6 +1,6 @@
 'use strict'
 
-import { Schema } from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 
 const DOCUMENT_NAME = 'Resource'
 const COLLECTION_NAME = 'Resources'
@@ -17,4 +17,5 @@ const resourceSchema = new Schema(
   }
 )
 
-export { resourceSchema, DOCUMENT_NAME, COLLECTION_NAME }
+const ResourceModel = mongoose.model(DOCUMENT_NAME, resourceSchema)
+export { ResourceModel, resourceSchema, DOCUMENT_NAME, COLLECTION_NAME }

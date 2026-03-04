@@ -1,0 +1,129 @@
+### RBAC Routes Test File
+@baseUrl=http://localhost:8010
+@api_key=ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+@client_id=692c89f99b99687d40001051
+@access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjY3NjM1NjIsImV4cCI6MTc2NzM2ODM2Mn0.vEIHpLhy_QpA1DEdN9RD1zLcH5ZXecf35LgSmWKrbo0
+
+### 1. Create Resource
+POST {{baseUrl}}/rbac/createResource
+Content-Type: application/json
+
+{
+  "name": "profile",
+  "slug": "profile",
+  "description": "User profile resource"
+}
+
+### 2. Create Another Resource
+POST {{baseUrl}}/rbac/createResource
+Content-Type: application/json
+
+{
+  "name": "balance",
+  "slug": "balance",
+  "description": "User balance resource"
+}
+
+### 3. Create Role
+POST {{baseUrl}}/rbac/createRole
+Content-Type: application/json
+
+{
+  "name": "admin",
+  "slug": "admin",
+  "description": "Administrator role",
+  "grants": [
+    {
+      "resource": "profile",
+      "actions": ["create", "read", "update", "delete"],
+      "attributes": ["*"]
+    },
+    {
+      "resource": "balance",
+      "actions": ["read", "update"],
+      "attributes": ["*"]
+    }
+  ]
+}
+
+### 4. Create Another Role
+POST {{baseUrl}}/rbac/createRole
+Content-Type: application/json
+
+{
+  "name": "shop",
+  "slug": "shop",
+  "description": "Shop owner role",
+  "grants": [
+    {
+      "resource": "profile",
+      "actions": ["read", "update"],
+      "attributes": ["*"]
+    }
+  ]
+}
+
+### 5. Get List of Resources (No Pagination)
+GET {{baseUrl}}/rbac/listResources
+Content-Type: application/json
+
+### 6. Get List of Resources with Pagination
+GET {{baseUrl}}/rbac/listResources?limit=10&offset=0
+Content-Type: application/json
+
+### 7. Get List of Resources with Search
+GET {{baseUrl}}/rbac/listResources?limit=10&offset=0&search=profile
+Content-Type: application/json
+
+### 8. Get List of Roles (No Pagination)
+GET {{baseUrl}}/rbac/listRoles
+Content-Type: application/json
+
+### 9. Get List of Roles with Pagination
+GET {{baseUrl}}/rbac/listRoles?limit=10&offset=0
+Content-Type: application/json
+
+### 10. Get List of Roles with Search
+GET {{baseUrl}}/rbac/listRoles?limit=10&offset=0&search=admin
+Content-Type: application/json
+
+### Test Cases for Validation
+
+### Test: Create Duplicate Resource (Should Fail)
+POST {{baseUrl}}/rbac/createResource
+Content-Type: application/json
+
+{
+  "name": "profile",
+  "slug": "profile_duplicate",
+  "description": "Duplicate resource"
+}
+
+### Test: Create Duplicate Role (Should Fail)
+POST {{baseUrl}}/rbac/createRole
+Content-Type: application/json
+
+{
+  "name": "admin",
+  "slug": "admin_duplicate",
+  "description": "Duplicate role",
+  "grants": []
+}
+
+### Test: Create Resource with Empty Name (Should Fail)
+POST {{baseUrl}}/rbac/createResource
+Content-Type: application/json
+
+{
+  "name": "",
+  "slug": "empty_resource",
+  "description": "Test empty name"
+}
+
+### Test: Search Non-existent Resource
+GET {{baseUrl}}/rbac/listResources?search=nonexistent
+Content-Type: application/json
+
+### Test: Search Non-existent Role
+GET {{baseUrl}}/rbac/listRoles?search=nonexistent
+Content-Type: application/json
