@@ -4,4 +4,7 @@ ctrl - alt - l : auto format
 
 - add module xxxx-controller
 
-- xxx- start need to import controller module
+- xxxx-start need to import controller module
+
+
+start -> controller -> app
