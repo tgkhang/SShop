@@ -3,9 +3,9 @@
 import { InventoryRepo } from '#models/repository/inventory.repo.js'
 import redis from 'redis'
 
-const redisClient = redis.createClient()
-// Connect to Redis server (default: localhost:6379)
-redisClient.connect().catch(console.error)
+// const redisClient = redis.createClient()
+// // Connect to Redis server (default: localhost:6379)
+// redisClient.connect().catch(console.error)
 // const redisClient = redis.createClient({
 //   socket: {
 //     host: process.env.REDIS_HOST || 'localhost',
@@ -14,6 +14,9 @@ redisClient.connect().catch(console.error)
 //   password: process.env.REDIS_PASSWORD || undefined,
 //   database: process.env.REDIS_DB || 0,
 // })
+
+import { RedisDB } from '#dbs/init.redis.js'
+const redisClient = RedisDB.getRedis()
 
 // Handle Redis errors
 redisClient.on('error', (err) => console.log('Redis Client Error', err))

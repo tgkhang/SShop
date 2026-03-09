@@ -12,6 +12,7 @@ import { APIs_V1 } from '#routes/v1/index.js'
 import { StatusCodes } from 'http-status-codes'
 import { v4 as uuidv4 } from 'uuid'
 import { mylogger } from '#loggers/mylogger.log.js'
+import { RedisDB } from '#dbs/init.redis.js'
 
 const app = express()
 
@@ -60,6 +61,7 @@ app.use((req, res, next) => {
   next()
 })
 
+RedisDB.initRedis()
 app.use('/v1', APIs_V1)
 
 // Middleware for handling errors globally
