@@ -13,6 +13,8 @@ import { uploadRouter } from './upload/index.js'
 import { testRouter } from './test/index.js'
 import { profileRouter } from './profile/index.js'
 import { rbacRouter } from './rbac/index.js'
+import { userRouter } from './user/index.js'
+import { emailRouter } from './email/index.js'
 //import { pushToDiscordLogger } from '#middlewares/index.js'
 
 const Router = express.Router()
@@ -54,5 +56,9 @@ Router.use('/test', testRouter)
 Router.use('/profile', profileRouter)
 
 Router.use('/rbac', rbacRouter)
+
+Router.use('/user', userRouter)
+
+Router.use('/email', emailRouter)
 
 export const APIs_V1 = Router

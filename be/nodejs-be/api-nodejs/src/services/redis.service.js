@@ -14,12 +14,11 @@ import redis from 'redis'
 //   password: process.env.REDIS_PASSWORD || undefined,
 //   database: process.env.REDIS_DB || 0,
 // })
+// Handle Redis errors
+// redisClient.on('error', (err) => console.log('Redis Client Error', err))
 
 import { RedisDB } from '#dbs/init.redis.js'
 const redisClient = RedisDB.getRedis()
-
-// Handle Redis errors
-redisClient.on('error', (err) => console.log('Redis Client Error', err))
 
 // ai dat hang thi lay key , dat xong thi tra key ve cho nguoi khac su dung
 const acquireLock = async (productId, quantity, cartId) => {

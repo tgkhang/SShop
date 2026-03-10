@@ -1,4 +1,4 @@
-import { RedisErrorResponse } from '#core/error.response'
+import { RedisErrorResponse } from '#core/error.response.js'
 import redis from 'redis'
 
 let client = {}

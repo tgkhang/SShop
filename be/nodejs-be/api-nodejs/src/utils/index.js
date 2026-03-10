@@ -55,3 +55,11 @@ export const updateNestedObjectParse = (obj, parentKey = '', updateObj = {}) => 
 }
 
 export const convertToObjectId = (id) => new mongoose.Types.ObjectId(id)
+
+export const replacePlaceholder = (template, params) => {
+  Object.keys(params).forEach((key) => {
+    const placeholder = `{{${key}}}`
+    template = template.replace(new RegExp(placeholder, 'g'), params[key])
+  })
+  return template
+}
