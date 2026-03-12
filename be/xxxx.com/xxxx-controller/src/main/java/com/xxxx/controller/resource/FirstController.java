@@ -15,6 +15,6 @@ public class FirstController {
     @RequestMapping
     public String getStatus() {
 //        return "Application is running";
-        return eventAppService.status();
+        return eventAppService.sayHi("xxxx");
     }
 }
