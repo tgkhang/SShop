@@ -9,5 +9,4 @@ public class StartApplication {
 //        IO.println(String.format("Hello and welcome!"));
         SpringApplication.run(StartApplication.class, args);
     }
-
 }
