@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>4.0.3</version>
+                <version>3.5.11</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -45,9 +45,15 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
+<!--        spring boot 4-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-aspectj</artifactId>-->
+<!--        </dependency>-->
+<!--        spring boot 3-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aspectj</artifactId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
         <dependency>

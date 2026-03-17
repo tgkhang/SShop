@@ -1,4 +1,4 @@
-package com.xxxx.controller.resource;
+package com.xxxx.ddd.controller.http;
 
 import com.xxxx.ddd.application.service.event.EventAppService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
