@@ -1,7 +1,7 @@
 package com.xxxx.ddd.infrastructure.cache.redis;
 
 public interface RedisInfrasService {
-    // name = "anonystick"
+    // name = "abc"
     void setString(String key, String value);
     String getString(String key);
 

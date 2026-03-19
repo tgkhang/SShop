@@ -45,8 +45,6 @@ spring:
             connect-timeout: 30000 # Connection timeout (in milliseconds)
 
 
-
-
 resilience4j:
     circuitbreaker:
         instances:
@@ -86,3 +84,6 @@ management:
             show-details: always
         prometheus:
             enabled: true
+    metrics:
+        tags:
+            application: ${spring.application.name}

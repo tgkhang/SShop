@@ -1,0 +1,21 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "ticketsell-prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["host.docker.internal:9090"]
+    metrics_path: /metrics
+
+  - job_name: "ticketsell-springboot"
+    scrape_interval: 5s
+    static_configs:
+      - targets: [ "host.docker.internal:8080" ]
+    metrics_path: /actuator/prometheus
+
+  - job_name: "ticketsell-node-exporter"
+    scrape_interval: 5s
+    static_configs:
+      - targets: [ "host.docker.internal:9100" ]
+    metrics_path: /metrics

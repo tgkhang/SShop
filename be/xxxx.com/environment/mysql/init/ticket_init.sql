@@ -1,9 +1,9 @@
-CREATE DATABASE IF NOT EXISTS vetautet
+CREATE DATABASE IF NOT EXISTS ticket
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
 -- 1. ticket table
-CREATE TABLE IF NOT EXISTS `vetautet`.`ticket` (
+CREATE TABLE IF NOT EXISTS `ticket`.`ticket` (
                                                    `id` BIGINT(20)  NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
     `name` VARCHAR(50) NOT NULL COMMENT 'ticket name',
     `desc` TEXT COMMENT 'ticket description',
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `vetautet`.`ticket` (
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ticket table';
 
 -- 2. ticket detail (item) table
-CREATE TABLE IF NOT EXISTS `vetautet`.`ticket_item` (
+CREATE TABLE IF NOT EXISTS `ticket`.`ticket_item` (
                                                         `id` BIGINT(20)  NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
     `name` VARCHAR(50) NOT NULL COMMENT 'Ticket title',
     `description` TEXT COMMENT 'Ticket description',
@@ -42,13 +42,13 @@ CREATE TABLE IF NOT EXISTS `vetautet`.`ticket_item` (
 
 -- INSERT MOCK DATA
 -- Insert data into `ticket` table
-INSERT INTO `vetautet`.`ticket` (`name`, `desc`, `start_time`, `end_time`, `status`, `updated_at`, `created_at`)
+INSERT INTO `ticket`.`ticket` (`name`, `desc`, `start_time`, `end_time`, `status`, `updated_at`, `created_at`)
 VALUES
     ('Đợt Mở Bán Vé Ngày 12/12', 'Sự kiện mở bán vé đặc biệt cho ngày 12/12', '2024-12-12 00:00:00', '2024-12-12 23:59:59', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     ('Đợt Mở Bán Vé Ngày 01/01', 'Sự kiện mở bán vé cho ngày đầu năm mới 01/01', '2025-01-01 00:00:00', '2025-01-01 23:59:59', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Insert data into `ticket_item` table corresponding to each event in `ticket` table
-INSERT INTO `vetautet`.`ticket_item` (`name`, `description`, `stock_initial`, `stock_available`, `is_stock_prepared`, `price_original`, `price_flash`, `sale_start_time`, `sale_end_time`, `status`, `activity_id`, `updated_at`, `created_at`)
+INSERT INTO `ticket`.`ticket_item` (`name`, `description`, `stock_initial`, `stock_available`, `is_stock_prepared`, `price_original`, `price_flash`, `sale_start_time`, `sale_end_time`, `status`, `activity_id`, `updated_at`, `created_at`)
 VALUES
     -- Ticket items for the 12/12 event
     ('Vé Sự Kiện 12/12 - Hạng Phổ Thông', 'Vé phổ thông cho sự kiện ngày 12/12', 1000, 1000, 0, 100000, 10000, '2024-12-12 00:00:00', '2024-12-12 23:59:59', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
