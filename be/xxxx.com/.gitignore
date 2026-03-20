@@ -41,3 +41,4 @@ build/
 ### Docker volumes / generated data ###
 environment/data/
 /environment/data
+/.claude
