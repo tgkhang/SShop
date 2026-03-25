@@ -1,0 +1,143 @@
+@url_dev=http://localhost:8010
+@api_key=ece78252d991e1f6dcb6736c14d443fe27ee798589e85327d7ec42158e696c26
+@client_id=692c89f99b99687d40001051
+@access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTJjODlmOTliOTk2ODdkNDAwMDEwNTEiLCJlbWFpbCI6InRna2hhbmcyMkBjbGMuZml0dXMiLCJpYXQiOjE3NjY3NjM1NjIsImV4cCI6MTc2NzM2ODM2Mn0.vEIHpLhy_QpA1DEdN9RD1zLcH5ZXecf35LgSmWKrbo0
+
+### Create SPU with SKUs (Clothing - Color + Size variations)
+POST {{url_dev}}/v1/product/spu/new
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "product_name": "Classic Cotton T-Shirt",
+  "product_thumb": "https://example.com/images/tshirt.jpg",
+  "product_description": "Premium cotton t-shirt available in multiple colors and sizes",
+  "product_price": 29.99,
+  "product_quantity": 300,
+  "product_category": ["fashion", "clothing"],
+  "product_attributes": {
+    "brand": "Nike",
+    "material": "100% Cotton",
+    "care": "Machine washable"
+  },
+  "product_variations": [
+    {
+      "name": "color",
+      "images": ["https://example.com/images/red.jpg", "https://example.com/images/blue.jpg"],
+      "options": ["red", "blue"]
+    },
+    {
+      "name": "size",
+      "images": [],
+      "options": ["S", "M", "L"]
+    }
+  ],
+  "sku_list": [
+    {
+      "sku_tier_idx": [0, 0],
+      "sku_default": true,
+      "sku_price": 29.99,
+      "sku_stock": 50
+    },
+    {
+      "sku_tier_idx": [0, 1],
+      "sku_default": false,
+      "sku_price": 29.99,
+      "sku_stock": 50
+    },
+    {
+      "sku_tier_idx": [0, 2],
+      "sku_default": false,
+      "sku_price": 29.99,
+      "sku_stock": 50
+    },
+    {
+      "sku_tier_idx": [1, 0],
+      "sku_default": false,
+      "sku_price": 29.99,
+      "sku_stock": 50
+    },
+    {
+      "sku_tier_idx": [1, 1],
+      "sku_default": false,
+      "sku_price": 29.99,
+      "sku_stock": 50
+    },
+    {
+      "sku_tier_idx": [1, 2],
+      "sku_default": false,
+      "sku_price": 29.99,
+      "sku_stock": 50
+    }
+  ]
+}
+
+###
+
+### Create SPU without SKUs (no variations)
+POST {{url_dev}}/v1/product/spu/new
+Content-Type: application/json
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+{
+  "product_name": "Wireless Bluetooth Headphones",
+  "product_thumb": "https://example.com/images/headphones.jpg",
+  "product_description": "Over-ear noise cancelling headphones with 30h battery life",
+  "product_price": 149.99,
+  "product_quantity": 80,
+  "product_category": ["electronics", "audio"],
+  "product_attributes": {
+    "brand": "Sony",
+    "model": "WH-1000XM5",
+    "connectivity": "Bluetooth 5.2",
+    "battery": "30 hours"
+  },
+  "product_variations": [],
+  "sku_list": []
+}
+
+###
+
+### Get SPU with its SKUs
+# Replace {spu_id} with the product_id returned from the create call above
+GET {{url_dev}}/v1/product/spu/{spu_id}
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+###
+
+### Get SPU again - should be served from Redis cache (check response for fromCache: true)
+GET {{url_dev}}/v1/product/spu/{spu_id}
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+###
+
+### Get all SKUs by SPU id
+GET {{url_dev}}/v1/product/sku/{spu_id}/all
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+###
+
+### Get a single SKU by product_id and sku_id (first request - DB hit, populates cache)
+# Replace {spu_id} with product_id and {sku_id} with a sku_id from the create response
+GET {{url_dev}}/v1/product/sku/{spu_id}/{sku_id}
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}
+
+###
+
+### Get same SKU again - should be served from Redis cache (fromCache: true)
+GET {{url_dev}}/v1/product/sku/{spu_id}/{sku_id}
+x-api-key: {{api_key}}
+authorization: {{access_token}}
+x-client-id: {{client_id}}

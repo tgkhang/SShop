@@ -63,3 +63,7 @@ export const replacePlaceholder = (template, params) => {
   })
   return template
 }
+
+export const randomProductId = () => {
+  return Math.floor(Math.random() * 1000000).toString()
+}

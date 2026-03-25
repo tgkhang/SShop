@@ -48,4 +48,10 @@ export const env = {
   MAIL_PORT: process.env.MAIL_PORT,
   MAIL_USER: process.env.MAIL_USER,
   MAIL_PASSWORD: process.env.MAIL_PASSWORD,
+
+  REDIS_HOST: process.env.REDIS_HOST,
+  REDIS_PORT: process.env.REDIS_PORT,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+
+  ELASTICSEARCH_HOST: process.env.ELASTICSEARCH_HOST,
 }

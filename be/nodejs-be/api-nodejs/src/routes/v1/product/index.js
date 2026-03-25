@@ -2,6 +2,8 @@ import express from 'express'
 import { asyncHandler } from '#helpers/asyncHandler.js'
 import { authenticationV2 } from '#auth/authUtils.js'
 import ProductController from '#controllers/product.controller.js'
+import { cacheMiddleware } from '#middlewares/cache.middleware.js'
+import { CACHE_PRODUCT } from '#configs/constants.js'
 
 const router = express.Router()
 
@@ -15,6 +17,25 @@ router.use(authenticationV2)
 
 // Create new product
 router.post('', asyncHandler(ProductController.createProduct))
+
+router.post('/spu/new', asyncHandler(ProductController.createNewSpu))
+
+router.get(
+  '/spu/:spu_id',
+  cacheMiddleware({ keyPrefix: CACHE_PRODUCT.SPU, getKey: (req) => `${CACHE_PRODUCT.SPU}:${req.params.spu_id}` }),
+  asyncHandler(ProductController.getOneSpu)
+)
+
+router.get(
+  '/sku/:product_id/all',
+  asyncHandler(ProductController.getAllSkusBySpuId)
+)
+
+router.get(
+  '/sku/:product_id/:sku_id',
+  cacheMiddleware({ keyPrefix: CACHE_PRODUCT.SKU, getKey: (req) => `${CACHE_PRODUCT.SKU}:${req.params.product_id}:${req.params.sku_id}` }),
+  asyncHandler(ProductController.getOneSku)
+)
 
 // Update product
 router.patch('/:product_id', asyncHandler(ProductController.updateProduct))

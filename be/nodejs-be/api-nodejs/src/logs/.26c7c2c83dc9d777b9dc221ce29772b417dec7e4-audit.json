@@ -6,24 +6,9 @@
     "auditLog": "src\\logs\\.26c7c2c83dc9d777b9dc221ce29772b417dec7e4-audit.json",
     "files": [
         {
-            "date": 1772614343091,
-            "name": "src\\logs\\mylogger-2026-03-04.error.log",
-            "hash": "c7aaf827c8bfea6de54f906222a023cb33a5a6d98899dd6e3d7b8702d0e10cc6"
-        },
-        {
-            "date": 1772820432833,
-            "name": "src\\logs\\mylogger-2026-03-07.error.log",
-            "hash": "1f9c416b268d960e89877edf8477749cb4587e6d14d656d43bc14482e9e8b6e9"
-        },
-        {
-            "date": 1773067323722,
-            "name": "src\\logs\\mylogger-2026-03-09.error.log",
-            "hash": "c5aeee03eb4b42b75c100c35d34361a4ffaaf513ee4f2da87cf4393ac1767eb4"
-        },
-        {
-            "date": 1773115911546,
-            "name": "src\\logs\\mylogger-2026-03-10.error.log",
-            "hash": "2fb424f747c015d5d4f65d3fc884f25cb8c4a853204b5c38fc45e2bb3d03c6b4"
+            "date": 1774416664756,
+            "name": "src\\logs\\mylogger-2026-03-25.error.log",
+            "hash": "0019666fd2d4f1965d65f329aa1c50f02bb175a7fcddd29ee5b8e8145b1f8c55"
         }
     ],
     "hashType": "sha256"
