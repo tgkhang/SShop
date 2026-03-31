@@ -99,6 +99,20 @@ services:
       - /sys:/host/sys:ro
       - /:/rootfs:ro
 
+  # Redis exporter
+  redis-exporter:
+    container_name: pre-event-redis-exporter
+    image: oliver006/redis_exporter:latest
+    restart: unless-stopped
+    ports:
+      - "9121:9121"
+    environment:
+      - REDIS_ADDR=redis://redis:6379
+    networks:
+      - pre-event-network
+    depends_on:
+      - redis
+
   # MySQL exporter
   mysqld-exporter:
     container_name: pre-event-mysqld-exporter

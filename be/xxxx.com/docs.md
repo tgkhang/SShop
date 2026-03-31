@@ -17,4 +17,34 @@ Import each dashboard by ID:
 7362 — MySQL Overview
 4701 — JVM Micrometer
 11378 — Spring Boot Statistics
-When it asks for datasource, select Prometheus (it should auto-select since it's default)
+763 - redis exporter
+When it asks for datasource, select Prometheus (it should auto-select since it's default) 
+setup variable if it is not in dashboard, go to dashboard settings -> variables -> add variable
+
+
+
+access docker redis
+docker exec -it pre-event-redis bash
+continue to run redis-cli
+
+docker exec -it pre-event-redis redis-cli
+
+bash vs cli: bash cho phép bạn chạy các lệnh shell trong container, còn cli (command line interface) là giao diện dòng lệnh của ứng dụng cụ thể (ở đây là redis-cli cho Redis).
+
+
+C:\Users\trang>docker exec -it pre-event-redis bash
+root@759c1cd4d031:/data# redis-cli info clients
+
+
+access mysql
+docker exec -it pre-event-mysql -uroot -proot1234 
+OCI runtime exec failed: exec failed: unable to start container process: exec: "-uroot": executable file not found in $PATH
+
+
+change to 
+docker exec -it pre-event-mysql bash
+
+next run: 
+bash-5.1# mysql -uroot -proot1234
+SHOW VARIABLES LIKE 'version';
+SHOW VARIABLES LIKE 'max_connections';
