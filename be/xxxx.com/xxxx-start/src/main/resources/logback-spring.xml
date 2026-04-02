@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="preticket"/>
+
+    <!-- ═══════════════════════════════════════════════
+         Console appender (human-readable, colorized)
+         ═══════════════════════════════════════════════ -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%blue(%t)] %yellow(%logger{36}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ═══════════════════════════════════════════════
+         Logstash TCP appender (JSON, for ELK stack)
+         Host port 5033 → Logstash container port 5000/tcp
+         ═══════════════════════════════════════════════ -->
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>localhost:5033</destination>
+        <keepAliveDuration>5 minutes</keepAliveDuration>
+        <reconnectionDelay>10 second</reconnectionDelay>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"app":"${appName}","env":"dev"}</customFields>
+        </encoder>
+    </appender>
+
+    <!-- Wrap LOGSTASH in async appender to avoid blocking threads -->
+    <appender name="ASYNC_LOGSTASH" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="LOGSTASH"/>
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <neverBlock>true</neverBlock>
+    </appender>
+
+    <!-- ═══════════════════════════════════════════════
+         Profile-specific configuration
+         ═══════════════════════════════════════════════ -->
+    <springProfile name="dev,default">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_LOGSTASH"/>
+        </root>
+        <!-- Reduce noise from framework internals -->
+        <logger name="org.hibernate.SQL"              level="DEBUG"/>
+        <logger name="org.hibernate.type"             level="WARN"/>
+        <logger name="com.zaxxer.hikari"              level="WARN"/>
+        <logger name="io.lettuce"                     level="WARN"/>
+        <logger name="org.springframework.web"        level="INFO"/>
+    </springProfile>
+
+    <springProfile name="prod">
+        <root level="WARN">
+            <appender-ref ref="ASYNC_LOGSTASH"/>
+        </root>
+    </springProfile>
+
+</configuration>

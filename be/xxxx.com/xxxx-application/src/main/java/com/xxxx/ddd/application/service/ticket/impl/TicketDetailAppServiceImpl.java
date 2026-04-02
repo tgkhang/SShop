@@ -11,10 +11,8 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class TicketDetailAppServiceImpl implements TicketDetailAppService {
-
     @Autowired
     private TicketDetailDomainService ticketDetailDomainService;
-
 
     @Autowired
     private TicketDetailCacheService ticketDetailCacheService;
@@ -22,11 +20,8 @@ public class TicketDetailAppServiceImpl implements TicketDetailAppService {
     @Override
     public TicketDetail getTicketDetailById(Long ticketId) {
         log.info("Implement Application : {}", ticketId);
-        //return ticketDetailDomainService.getTicketDetailById(ticketId);
-
-
+//        return ticketDetailDomainService.getTicketDetailById(ticketId);
 //        return ticketDetailCacheService.getTicketDefaultCacheNormal(ticketId, System.currentTimeMillis());
-
 //        return ticketDetailCacheService.getTicketDefaultCacheVip(ticketId, System.currentTimeMillis());
         return ticketDetailCacheService.getTicketDefaultCacheLocal(ticketId, System.currentTimeMillis());
     }

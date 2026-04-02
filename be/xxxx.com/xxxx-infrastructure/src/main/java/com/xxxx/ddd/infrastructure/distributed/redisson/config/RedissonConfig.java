@@ -5,18 +5,17 @@ import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class RedissonConfig {
-
-    //    @Value("redis://127.0.0.1:6399")
-    //    private String redisAddress;
+    @Value("redis://127.0.0.1:6399")
+    private String redisAddress;
 
     @Bean
     public RedissonClient redissonClient() {
         Config config = new Config();
-        config.useSingleServer().setAddress("redis://127.0.0.1:6379").setConnectionPoolSize(50).setDatabase(0);
-
+        config.useSingleServer().setAddress(redisAddress).setConnectionPoolSize(50).setDatabase(0);
         return Redisson.create(config);
     }
 }

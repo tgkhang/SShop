@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/ticket")
 @Slf4j
 public class TicketDetailController {
-
     // CALL Service Application
     @Autowired
     private TicketDetailAppService ticketDetailAppService;

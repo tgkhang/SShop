@@ -1,0 +1,7 @@
+cluster.name: "preticket-cluster"
+network.host: 0.0.0.0
+
+# Disable security for development (ES 8.x enables it by default)
+xpack.security.enabled: false
+xpack.security.http.ssl.enabled: false
+xpack.security.transport.ssl.enabled: false

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
-
 @Service
 @Slf4j
 public class TicketDetailCacheService {
@@ -79,7 +78,7 @@ public class TicketDetailCacheService {
         log.info("cache miss: id={}, version={}", id, version);
 
         // 2. acquire distributed lock — only one thread rebuilds cache
-        RedisDistributedLocker locker = redisDistributedService.getDistributed("PRO_LOCK_KEY_ITEM" + id);
+        RedisDistributedLocker locker = redisDistributedService.getDistributedLock("PRO_LOCK_KEY_ITEM" + id);
 
         try {
             boolean isLock = locker.tryLock(1, 5, TimeUnit.SECONDS);
@@ -161,7 +160,7 @@ public class TicketDetailCacheService {
         }
 
         // 3. both caches missed — acquire distributed lock before hitting DB
-        RedisDistributedLocker locker = redisDistributedService.getDistributed("PRO_LOCK_KEY_ITEM" + id);
+        RedisDistributedLocker locker = redisDistributedService.getDistributedLock("PRO_LOCK_KEY_ITEM" + id);
 
         try {
             boolean isLock = locker.tryLock(1, 5, TimeUnit.SECONDS);

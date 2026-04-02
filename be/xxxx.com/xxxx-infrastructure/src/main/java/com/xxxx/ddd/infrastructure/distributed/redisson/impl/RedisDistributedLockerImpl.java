@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 public class RedisDistributedLockerImpl implements RedisDistributedService {
-
     @Resource
     private RedissonClient redissonClient;
 
@@ -22,7 +21,6 @@ public class RedisDistributedLockerImpl implements RedisDistributedService {
         RLock rLock = redissonClient.getLock(lockKey);
 
         return new RedisDistributedLocker() {
-
             @Override
             public boolean tryLock(long waitTime, long leaseTime, TimeUnit unit) throws InterruptedException {
                 boolean isLockSuccess = rLock.tryLock(waitTime, leaseTime, unit);

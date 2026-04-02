@@ -98,6 +98,8 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
+    depends_on:
+      - prometheus
 
   # Redis exporter
   redis-exporter:
@@ -133,10 +135,70 @@ services:
       - '--collect.info_schema.tables'
       - '--collect.info_schema.query_response_time'
       - '--collect.perf_schema.file_events'
-      - '--collect.perf_schema.eventsstatements'
+      - '--collect.perf_schema.events_statements_digest'
       - '--collect.perf_schema.indexiowaits'
       - '--collect.global_status'
     volumes:
       - ./mysqld-exporter/.my.cnf:/etc/mysql/.my.cnf:ro
     depends_on:
       - mysql
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: pre-event-elasticsearch
+    environment:
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      discovery.type: single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elk/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./data/elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS http://localhost:9200 >/dev/null || exit 1" ]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+    networks:
+        - pre-event-network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.13.4
+    container_name: pre-event-logstash
+    environment:
+        LS_JAVA_OPTS: "-Xms256m -Xmx256m"
+    volumes:
+      - ./elk/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./elk/pipeline:/usr/share/logstash/pipeline
+    ports:
+      - "5044:5044"
+      - "5033:5000/tcp"
+      - "5022:5000/udp"
+      - "9600:9600"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+        - pre-event-network
+
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    container_name: pre-event-kibana
+    volumes:
+      - ./elk/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - "5601:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - pre-event-network
+
+
+

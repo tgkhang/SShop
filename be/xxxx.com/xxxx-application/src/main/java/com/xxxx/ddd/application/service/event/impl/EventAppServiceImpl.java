@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EventAppServiceImpl implements EventAppService {
-    //call Domain servce
+    // call Domain Service
     @Autowired
     private FirstDomainService firstDomainService;
 

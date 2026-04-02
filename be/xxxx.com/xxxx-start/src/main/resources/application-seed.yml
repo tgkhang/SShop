@@ -1,0 +1,13 @@
+# Profile activated only during manual seeding.
+# Inherits all settings from application.yml.
+# Override anything here that should differ during seed runs.
+
+spring:
+    jpa:
+        show-sql: false   # reduce log noise during seed
+
+logging:
+    level:
+        com.xxxx.seed: INFO
+        org.springframework: WARN
+        org.hibernate: WARN

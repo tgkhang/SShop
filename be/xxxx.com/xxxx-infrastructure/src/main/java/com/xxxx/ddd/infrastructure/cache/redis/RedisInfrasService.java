@@ -1,7 +1,6 @@
 package com.xxxx.ddd.infrastructure.cache.redis;
 
 public interface RedisInfrasService {
-    // name = "abc"
     void setString(String key, String value);
     String getString(String key);
 
@@ -9,7 +8,5 @@ public interface RedisInfrasService {
     <T> T getObject(String key, Class<T> targetClass);
 
 //    void put(String key, Object value, long timeout, TimeUnit unit);
-//
 //    void put(String key, Object value, long expireTime);
-
 }

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class TicketDetailDomainServiceImpl implements TicketDetailDomainService {
     // Call repository in domain
-
     @Autowired
     private TicketDetailRepository ticketDetailRepository;
 

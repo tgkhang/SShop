@@ -13,7 +13,6 @@ import java.util.Optional;
 @Slf4j
 public class TicketDetailInfrasRepositoryImpl implements TicketDetailRepository {
     // CALL JPA MAPPER
-
     @Autowired
     private TicketDetailJPAMapper ticketDetailJPAMapper;
 

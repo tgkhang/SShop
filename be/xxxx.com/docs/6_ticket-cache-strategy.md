@@ -4,13 +4,15 @@
 
 `TicketDetailAppServiceImpl.getTicketDetailById()` wires together three progressively more robust caching strategies, implemented in `TicketDetailCacheService`. Each level solves a specific production problem. Uncomment the desired level in the app service to switch between them.
 
+- chuyển đổi comment để chạy
+
 ---
 
 ## Level 1 — Normal (Simple Redis Cache-Aside)
 
 **Method:** `getTicketDefaultCacheNormal(id, version)`
 
-```
+```text
 Request
   │
   ├─► Redis hit? ──YES──► return
@@ -26,7 +28,8 @@ Request
 **Problem it solves:** Avoids hitting the DB on every request once the cache is warm.
 
 **Remaining risk — Cache Stampede:**
-When the Redis key expires, many concurrent requests all miss the cache simultaneously and all hammer the DB at once. This is the "thundering herd" problem.
+
+- các vấn đề như hết hạn, tuyết lở, chưa co lock đã đề cập note
 
 ---
 
@@ -34,7 +37,7 @@ When the Redis key expires, many concurrent requests all miss the cache simultan
 
 **Method:** `getTicketDefaultCacheVip(id, version)`
 
-```
+```txt
 Request
   │
   ├─► Redis hit? ──YES──► return
@@ -62,6 +65,7 @@ Request
 **Problem it solves:** Cache stampede. Only one writer hits the DB; all others fail-fast.
 
 **Remaining cost:** In-process threads still pay the Redis network round-trip on every hot read.
+áp dụng local cached để đẩy mạnh lượng request
 
 ---
 
@@ -69,7 +73,7 @@ Request
 
 **Method:** `getTicketDefaultCacheLocal(id, version)`
 
-```
+```txt
 Request
   │
   ├─► Guava local cache hit? ──YES──► return   (zero network, ~ns)
@@ -103,28 +107,6 @@ Request
 
 ---
 
-## Key Concepts
-
-| Concept | Definition | Solved by |
-|---|---|---|
-| Cache miss | Key not in cache, must hit DB | All levels |
-| Cache stampede / thundering herd | Many concurrent misses all hit DB simultaneously | Level 2, 3 (lock) |
-| Cache penetration | Requests for non-existent IDs always miss → DB DoS | Level 2, 3 (cache null) |
-| Two-layer cache | Local (Guava) + distributed (Redis) | Level 3 |
-
----
-
-## Infrastructure
-
-| Component | Role |
-|---|---|
-| `RedisInfrasService` | Redis get/set wrapper |
-| `RedisDistributedService` | Factory for `RedisDistributedLocker` instances (Redisson) |
-| `RedisDistributedLocker` | `tryLock(waitTime, leaseTime)` / `unlock()` |
-| Guava `Cache<Long, TicketDetail>` | In-process local cache, 10 min TTL |
-
----
-
 ## Switching Levels
 
 In `TicketDetailAppServiceImpl.getTicketDetailById()`, uncomment the desired level:
@@ -140,5 +122,23 @@ In `TicketDetailAppServiceImpl.getTicketDetailById()`, uncomment the desired lev
 // return ticketDetailCacheService.getTicketDefaultCacheVip(ticketId, System.currentTimeMillis());
 
 // Level 3 — local + Redis + lock (production recommended for hot tickets)
-return ticketDetailCacheService.getTicketDefaultCacheLocal(ticketId, System.currentTimeMillis());
+// return ticketDetailCacheService.getTicketDefaultCacheLocal(ticketId, System.currentTimeMillis());
 ```
+
+## Test bằng wrk
+
+```bash
+wrk -t12 -c2000 -d2m http://localhost:8080/ticket
+```
+
+Ý nghĩa:
+
+- `-t12`: 12 threads
+- `-c2000`: 2000 concurrent connections
+- `-d2m`: duration 2 minutes
+- `http://localhost:8080/ticket`: target URL (adjust as needed)
+
+12 thread chạy concurrentcy 2000 request đồng thơi, chia deu cho 12 thread, mỗi thread sẽ có khoảng 166-167 request đồng thời. Tổng cộng sẽ có 2000 request được gửi đến server trong suốt 2 phút.
+
+- chạy xong có vtheer vào <http://localhost:3000> (grafana) để xem dashboard redis, local cache hit/miss, db query count... để thấy sự khác biệt giữa các level cache strategy.
+-
