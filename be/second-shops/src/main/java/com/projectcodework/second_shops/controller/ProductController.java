@@ -11,6 +11,7 @@ import com.projectcodework.second_shops.service.product.IProductService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +55,7 @@ public class ProductController {
     @Operation(summary = "Add Product", description = "Add a new product")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/add")
-    public ResponseEntity<APIResponse> addProduct(@RequestBody AddProductRequest addProductRequest) {
+    public ResponseEntity<APIResponse> addProduct(@Valid @RequestBody AddProductRequest addProductRequest) {
         try {
             Product product = productService.addProduct(addProductRequest);
             ProductDto productDto = productMapper.mapToProductDto(product);
@@ -68,7 +69,7 @@ public class ProductController {
     @Operation(summary = "Update Product", description = "Update an existing product")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{productId}/update")
-    public ResponseEntity<APIResponse> updateProduct(@RequestBody ProductUpdateRequest request,
+    public ResponseEntity<APIResponse> updateProduct(@Valid @RequestBody ProductUpdateRequest request,
             @PathVariable Long productId) {
         try {
             Product updatedProduct = productService.updateProduct(request, productId);

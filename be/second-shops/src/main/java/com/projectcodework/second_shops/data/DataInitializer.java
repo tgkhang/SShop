@@ -28,6 +28,7 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
         createDefaultUsersIfNotExist();
     }
 
+    // Create role admin and user if not exist
     private void createDefaultRolesIfNotExist() {
         createRoleIfNotExist("ROLE_ADMIN", "Administrator role with full access");
         createRoleIfNotExist("ROLE_USER", "Standard user role with limited access");

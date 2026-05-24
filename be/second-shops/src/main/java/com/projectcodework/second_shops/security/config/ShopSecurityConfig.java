@@ -29,7 +29,6 @@ public class ShopSecurityConfig {
     private final JwtAuthEntryPoint authEntryPoint;
     private final JwtAuthTokenFilter jwtAuthTokenFilter;
 
-
     private static final String[] PUBLIC_URLS = {
             "/api/v1/auth/**",
             "/api/v1/users/create", // Allow public user registration
@@ -42,7 +41,6 @@ public class ShopSecurityConfig {
             "/api-docs/**",
             "/actuator/**"
     };
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {

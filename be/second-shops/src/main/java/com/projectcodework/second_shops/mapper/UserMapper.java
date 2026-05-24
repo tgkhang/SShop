@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
+@RequiredArgsConstructor // there is constructor to inject User mapper here
 public class UserMapper {
-    private final ModelMapper modelMapper;
+    private final ModelMapper modelMapper; //auto inject
     private final CartMapper cartMapper;
 
     public UserDto mapToUserDto(User user) {

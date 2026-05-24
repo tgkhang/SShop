@@ -1,6 +1,6 @@
 # Second Shops - E-commerce Backend
 
-A Spring Boot application for managing second-hand shops.
+A Simple Spring Boot application for managing second-hand shops.
 
 ## Quick Start
 

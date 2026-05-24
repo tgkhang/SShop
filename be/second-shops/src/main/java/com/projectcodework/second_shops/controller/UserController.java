@@ -10,6 +10,7 @@ import com.projectcodework.second_shops.response.APIResponse;
 import com.projectcodework.second_shops.service.user.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +55,7 @@ public class UserController {
 
     @Operation(summary = "Create new user", description = "Create a new user account")
     @PostMapping("/create")
-    public ResponseEntity<APIResponse> createUser(@RequestBody CreateUserRequest request) {
+    public ResponseEntity<APIResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
         try {
             User user = userService.createUser(request);
             UserDto userDto = userService.convertUserToDto(user);
@@ -71,7 +72,7 @@ public class UserController {
 
     @Operation(summary = "Update user", description = "Update user information")
     @PutMapping("/update/{userId}")
-    public ResponseEntity<APIResponse> updateUser(@RequestBody UpdateUserRequest request, 
+    public ResponseEntity<APIResponse> updateUser(@Valid @RequestBody UpdateUserRequest request,
                                                  @PathVariable Long userId) {
         try {
             User user = userService.updateUser(request, userId);

@@ -16,16 +16,20 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private String brand;
+
     private BigDecimal price;
-    private int inventory; // track number of product in stock
+
+    private int inventory; // track number of product in stoc
+    // k
     private String description;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
     private Category category;
-
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class ProductMapper {
-    //MODELMAPPER VERSION OF MAPPER
+    // MODELMAPPER VERSION OF MAPPER
     private final ModelMapper modelMapper;
 
     public ProductDto toDto(Product product) {
@@ -28,6 +28,7 @@ public class ProductMapper {
                     modelMapper.map(product.getCategory(), CategoryDto.class)
             );
         }
+
         if (product.getImages() != null) {
             dto.setImages(
                     product.getImages().stream()
