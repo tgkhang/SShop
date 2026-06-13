@@ -1,3 +1,6 @@
+# Third-party / external code (not ours)
+be/their/
+
 # Compiled class file
 *.class
 
@@ -19,6 +22,14 @@
 *.tar.gz
 *.rar
 
+.env
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# vs code
+.vscode/
+.idea/
+*.iml
+*.code-workspace
